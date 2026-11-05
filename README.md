@@ -1,7 +1,9 @@
-<h1 align="center">⏰ 上课提醒 · ClassReminder</h1>
+<p align="center"><img src="AppIcon.png" width="120" alt="上课提醒图标"></p>
+
+<h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.1.1-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.2.0-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -10,7 +12,7 @@
 
 <p align="center">
   一节课快开始时，在屏幕<strong>右上角</strong>弹出一张大卡片，连响三声，再用中文女声念：<br>
-  <strong>「九三班历史课，11点20分上课，还有15分钟」</strong>
+  <strong>「九三班历史课，11点25分上课，还有15分钟」</strong>
 </p>
 
 <p align="center">
@@ -41,7 +43,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.1.1.dmg`
+1. 到 Releases 下载 `ClassReminder-1.2.0.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -130,6 +132,9 @@ build.sh              一键编译 + 安装
 preview.png           面板截图
 preview-alert.png     提醒截图
 statusbar.png         菜单栏示意
+AppIcon.icns          应用图标（读入 .app 用）
+AppIcon.png           图标 1024 原图（README 展示用）
+tools/make-icon.py    生成图标的脚本
 CHANGELOG.md          更新日志
 ```
 
@@ -142,6 +147,7 @@ CHANGELOG.md          更新日志
 ```
 
 脚本会编译、临时签名、装到 `/Applications`、写好 LaunchAgent 并启动。
+图标由 `tools/make-icon.py` 生成（蓝底白表盘 + 琥珀提醒点），改完跑一遍再 `./build.sh` 即可。
 首次运行会把仓库里的 `timetable.json` 复制成你的数据；之后改仓库那份**不会**覆盖你在用的，要手动 `cp` 过去。
 
 ## 💻 命令行
@@ -166,6 +172,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.2.0**（2026-11-05）：新增 App 图标
 - **v1.1.1**（2026-11-05）：修正第 5 节课时间（11:25–12:05）
 - **v1.1.0**（2026-11-05）：CSV 导入与模板、提醒卡片改版、提前分钟可选、菜单栏图标
 - **v1.0.0**（2026-11-04）：首个版本，菜单栏面板、单双周、课前提醒、语音播报

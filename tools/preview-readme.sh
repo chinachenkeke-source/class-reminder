@@ -18,8 +18,8 @@ json.dump({"text": text, "mode": "gfm"}, open(req, "w"))
 out = subprocess.run(["gh", "api", "-X", "POST", "/markdown", "--input", req],
                      capture_output=True, text=True, check=True).stdout
 base = os.getcwd()
-for n in ["statusbar.png", "preview.png", "preview-alert.png"]:
-    out = out.replace('src="%s"' % n, 'src="file://%s/%s"' % (base, n))
+import re
+out = re.sub(r'src="(?![a-z]+://)([^"]+)"', lambda m: 'src="file://%s/%s"' % (base, m.group(1)), out)
 css = """
 <style>
   body{font-family:-apple-system,"PingFang SC","Helvetica Neue",Arial,sans-serif;font-size:16px;
