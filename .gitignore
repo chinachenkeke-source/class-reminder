@@ -3,3 +3,5 @@ build/
 *.dmg
 *.zip
 docs/
+promo/*.png
+promo/*.html
