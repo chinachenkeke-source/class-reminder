@@ -171,4 +171,4 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 ## 📄 许可
 
-[MIT](LICENSE) © 2026 陈可 —— 随便用、改、商用，保留版权声明即可。
+[MIT](LICENSE) © 2026 陈可可 (Chen Keke) —— 随便用、改、商用，保留版权声明即可。

@@ -20,7 +20,7 @@
 
 ### 📝 文档
 
-- 补上 MIT LICENSE，README 许可章节与徽章同步更新
+- 补上 MIT LICENSE（版权人 陈可可 / Chen Keke），README 许可章节与徽章同步更新
 - README 头部（标题、徽章、一句话简介）居中排版
 - README 重新排版：徽章排成一行、三张截图居中带说明、JSON 示例折行不再横向溢出
 - 新增 `tools/preview-readme.sh`：把 README 按 GitHub 样式渲染成图片，推之前先自查排版
