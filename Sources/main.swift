@@ -1410,15 +1410,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     }
 
     @objc func testAlert() {
-        if let (l, _) = nextLesson() {
-            push(headline: "\(l.klass) · \(l.subject)", startTime: l.start,
-                 sub: "还有 \(leadMinutes) 分钟（测试）",
-                 detail: l.period > 0 ? "第\(l.period)节" : "",
-                 speech: "\(spoken(l.klass))\(l.subject)课，\(spokenTime(l.start))上课，还有\(leadMinutes)分钟")
-        } else {
-            push(headline: "九3班 · 历史", startTime: "11:25", sub: "还有 \(leadMinutes) 分钟",
-                 detail: "这是测试 · 点「知道了」关闭",
-                 speech: "九三班历史课，还有\(leadMinutes)分钟")
+        // 连续演示两次：先「提前」，4 秒后「到点」
+        let l = nextLesson()?.0 ?? Lesson(weekday: 4, period: 5, start: "11:25", end: "12:05",
+                                          klass: "九3班", subject: "历史", weeks: nil)
+        let detail = l.period > 0 ? "第\(l.period)节" : ""
+
+        push(headline: "\(l.klass) · \(l.subject)", startTime: l.start,
+             sub: "还有 \(leadMinutes) 分钟（测试）", detail: detail,
+             speech: "\(spoken(l.klass))\(l.subject)课，\(spokenTime(l.start))上课，还有\(leadMinutes)分钟",
+             chimes: 3, tone: .lead)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) { [weak self] in
+            self?.push(headline: "\(l.klass) · \(l.subject)", startTime: l.start,
+                       sub: "\(l.end) 下课", detail: detail,
+                       speech: nil, chimes: 1, tone: .start)
+            log("测试：到点提醒")
         }
     }
 
