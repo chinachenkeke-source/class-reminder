@@ -17,8 +17,8 @@
     {
       "weekday": 1,
       "period": 5,
-      "start": "11:20",
-      "end": "12:00",
+      "start": "11:25",
+      "end": "12:05",
       "klass": "七1班",
       "subject": "历史",
       "weeks": "odd"
@@ -35,8 +35,8 @@
     {
       "weekday": 1,
       "period": 5,
-      "start": "11:20",
-      "end": "12:00",
+      "start": "11:25",
+      "end": "12:05",
       "klass": "七1班",
       "subject": "历史",
       "weeks": "even"
@@ -179,8 +179,8 @@
     {
       "weekday": 4,
       "period": 5,
-      "start": "11:20",
-      "end": "12:00",
+      "start": "11:25",
+      "end": "12:05",
       "klass": "九3班",
       "subject": "历史"
     },

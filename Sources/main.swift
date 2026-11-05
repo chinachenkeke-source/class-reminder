@@ -79,7 +79,7 @@ func spoken(_ s: String) -> String {
     return out
 }
 
-/// "11:20" → "11点20分"
+/// "11:25" → "11点25分"
 func spokenTime(_ hm: String) -> String {
     let p = hm.split(separator: ":")
     guard p.count == 2 else { return hm }
@@ -763,7 +763,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
            i + 1 < CommandLine.arguments.count {
             let root = alertRoot(size: NSSize(width: 620, height: 254),
                                  headline: "九3班 · 历史",
-                                 startTime: "11:20",
+                                 startTime: "11:25",
                                  sub: "还有 15 分钟",
                                  detail: "第5节")
             dumpView(root, to: CommandLine.arguments[i + 1])
@@ -1378,7 +1378,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                  detail: l.period > 0 ? "第\(l.period)节" : "",
                  speech: "\(spoken(l.klass))\(l.subject)课，\(spokenTime(l.start))上课，还有\(leadMinutes)分钟")
         } else {
-            push(headline: "九3班 · 历史", startTime: "11:20", sub: "还有 \(leadMinutes) 分钟",
+            push(headline: "九3班 · 历史", startTime: "11:25", sub: "还有 \(leadMinutes) 分钟",
                  detail: "这是测试 · 点「知道了」关闭",
                  speech: "九三班历史课，还有\(leadMinutes)分钟")
         }
