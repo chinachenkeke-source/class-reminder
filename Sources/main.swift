@@ -1233,7 +1233,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
 
     /// 画一张菜单栏示意图（真截图需要屏幕录制权限）
     func renderStatusBar(to path: String) {
-        let w: CGFloat = 420, h: CGFloat = 44
+        let w: CGFloat = 252, h: CGFloat = 44
         let root = FlippedView(frame: NSRect(x: 0, y: 0, width: w, height: h))
         root.wantsLayer = true
         let barColor = dyn(NSColor(srgbRed: 0.965, green: 0.965, blue: 0.973, alpha: 1),
