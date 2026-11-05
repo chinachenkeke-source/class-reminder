@@ -1,0 +1,241 @@
+{
+  "note": "2026 秋季学期示例课表（单双周）· 第1周 = 2026-08-31（周一）单周，之后单双交替",
+  "leadMinutes": 10,
+  "skipDates": [],
+  "weekAnchor": "2026-08-31",
+  "anchorIsOdd": true,
+  "lessons": [
+    {
+      "weekday": 1,
+      "period": 3,
+      "start": "09:25",
+      "end": "10:05",
+      "klass": "九1班",
+      "subject": "历史",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 1,
+      "period": 5,
+      "start": "11:20",
+      "end": "12:00",
+      "klass": "七1班",
+      "subject": "历史",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 1,
+      "period": 3,
+      "start": "09:25",
+      "end": "10:05",
+      "klass": "九1班",
+      "subject": "历史",
+      "weeks": "even"
+    },
+    {
+      "weekday": 1,
+      "period": 5,
+      "start": "11:20",
+      "end": "12:00",
+      "klass": "七1班",
+      "subject": "历史",
+      "weeks": "even"
+    },
+    {
+      "weekday": 1,
+      "period": 7,
+      "start": "15:20",
+      "end": "16:00",
+      "klass": "六2班",
+      "subject": "科学"
+    },
+    {
+      "weekday": 1,
+      "period": 8,
+      "start": "16:15",
+      "end": "16:55",
+      "klass": "六1班",
+      "subject": "科学"
+    },
+    {
+      "weekday": 1,
+      "period": 0,
+      "start": "18:40",
+      "end": "19:00",
+      "klass": "七1班",
+      "subject": "历史晚读",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 1,
+      "period": 0,
+      "start": "18:40",
+      "end": "19:00",
+      "klass": "九1/九3",
+      "subject": "历史晚读",
+      "weeks": "even"
+    },
+    {
+      "weekday": 1,
+      "period": 11,
+      "start": "19:45",
+      "end": "21:50",
+      "klass": "九1/九3",
+      "subject": "晚自习",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 1,
+      "period": 11,
+      "start": "19:45",
+      "end": "21:50",
+      "klass": "七1/八2",
+      "subject": "晚自习",
+      "weeks": "even"
+    },
+    {
+      "weekday": 2,
+      "period": 2,
+      "start": "08:35",
+      "end": "09:15",
+      "klass": "七1班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 2,
+      "period": 4,
+      "start": "10:30",
+      "end": "11:10",
+      "klass": "九3班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 2,
+      "period": 7,
+      "start": "15:20",
+      "end": "16:00",
+      "klass": "九1班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 2,
+      "period": 9,
+      "start": "17:05",
+      "end": "17:45",
+      "klass": "九3班",
+      "subject": "历史培优",
+      "weeks": "even"
+    },
+    {
+      "weekday": 3,
+      "period": 1,
+      "start": "07:50",
+      "end": "08:30",
+      "klass": "九3班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 3,
+      "period": 7,
+      "start": "15:20",
+      "end": "16:00",
+      "klass": "九1班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 3,
+      "period": 9,
+      "start": "17:05",
+      "end": "17:45",
+      "klass": "九1班",
+      "subject": "历史培优",
+      "weeks": "even"
+    },
+    {
+      "weekday": 3,
+      "period": 10,
+      "start": "19:00",
+      "end": "19:40",
+      "klass": "八2班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 4,
+      "period": 1,
+      "start": "07:50",
+      "end": "08:30",
+      "klass": "七1班",
+      "subject": "历史",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 4,
+      "period": 2,
+      "start": "08:35",
+      "end": "09:15",
+      "klass": "八2班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 4,
+      "period": 5,
+      "start": "11:20",
+      "end": "12:00",
+      "klass": "九3班",
+      "subject": "历史"
+    },
+    {
+      "weekday": 5,
+      "period": 0,
+      "start": "07:30",
+      "end": "07:50",
+      "klass": "七1/八2",
+      "subject": "历史早读",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 5,
+      "period": 0,
+      "start": "07:30",
+      "end": "07:50",
+      "klass": "九1/九3",
+      "subject": "历史早读",
+      "weeks": "even"
+    },
+    {
+      "weekday": 5,
+      "period": 2,
+      "start": "08:35",
+      "end": "09:15",
+      "klass": "八2班",
+      "subject": "历史",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 7,
+      "period": 4,
+      "start": "10:30",
+      "end": "11:10",
+      "klass": "三年级",
+      "subject": "科学"
+    },
+    {
+      "weekday": 7,
+      "period": 10,
+      "start": "19:00",
+      "end": "19:40",
+      "klass": "七1班",
+      "subject": "历史培优",
+      "weeks": "odd"
+    },
+    {
+      "weekday": 7,
+      "period": 12,
+      "start": "20:25",
+      "end": "21:05",
+      "klass": "八2班",
+      "subject": "历史培优",
+      "weeks": "odd"
+    }
+  ]
+}
