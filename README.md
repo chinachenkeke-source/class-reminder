@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.5.0-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.5.1-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -47,7 +47,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.5.0.dmg`
+1. 到 Releases 下载 `ClassReminder-1.5.1.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -117,7 +117,6 @@
 
 - 学校不分单双周 → 周次全选「每周」，或者**留空**（留空 = 每周都上）
 - 单周、双周上的课不一样 → 同一节填两行，一行「单周」一行「双周」
-- 单双周都上 → 选「单双周」，导入时自动拆成两节
 
 也支持 CSV：同样的七列，用 Excel 另存为 CSV 再导入一样能用。
 
@@ -180,6 +179,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.5.1**（2026-11-05）：周次下拉去掉「单双周」
 - **v1.5.0**（2026-11-05）：课表模板改成 xlsx（带下拉选择），支持直接导入
 - **v1.4.4**（2026-11-05）：到点提醒改成响三声
 - **v1.4.3**（2026-11-05）：测试连播间隔改成 15 秒
