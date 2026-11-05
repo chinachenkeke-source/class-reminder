@@ -107,6 +107,7 @@ enum Palette {
     static let accent = NSColor(srgbRed: 0.16, green: 0.42, blue: 0.94, alpha: 1)
     static let accent2 = NSColor(srgbRed: 0.35, green: 0.58, blue: 1.00, alpha: 1)
     static let amber = NSColor(srgbRed: 0.90, green: 0.55, blue: 0.05, alpha: 1)
+    static let amber2 = NSColor(srgbRed: 0.98, green: 0.68, blue: 0.14, alpha: 1)
 
     static let todayCard = dyn(NSColor(srgbRed: 0.953, green: 0.965, blue: 0.984, alpha: 1),
                                NSColor(srgbRed: 0.145, green: 0.157, blue: 0.180, alpha: 1))
@@ -759,6 +760,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             exit(0)
         }
 
+        if let i = CommandLine.arguments.firstIndex(of: "--shotstart"),
+           i + 1 < CommandLine.arguments.count {
+            let root = alertRoot(size: NSSize(width: 620, height: 254),
+                                 headline: "九3班 · 历史",
+                                 startTime: "11:25",
+                                 sub: "12:05 下课",
+                                 detail: "第5节", tone: .start)
+            dumpView(root, to: CommandLine.arguments[i + 1])
+            exit(0)
+        }
+
         if let i = CommandLine.arguments.firstIndex(of: "--shotalert"),
            i + 1 < CommandLine.arguments.count {
             let root = alertRoot(size: NSSize(width: 620, height: 254),
@@ -809,6 +821,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         if CommandLine.arguments.contains("--pop") {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { self.togglePopover() }
             DispatchQueue.main.asyncAfter(deadline: .now() + 25) { NSApp.terminate(nil) }
+        }
+
+        if CommandLine.arguments.contains("--teststart") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                if let (l, _) = self.nextLesson() {
+                    self.push(headline: "\(l.klass) · \(l.subject)", startTime: l.start,
+                              sub: "\(l.end) 下课",
+                              detail: l.period > 0 ? "第\(l.period)节" : "",
+                              speech: nil, chimes: 1, tone: .start)
+                }
+                log("测试：到点提醒")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 14) { NSApp.terminate(nil) }
         }
 
         if CommandLine.arguments.contains("--test") {
@@ -978,10 +1003,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         try? p.run()
     }
 
+    enum Tone { case lead, start }
+
     func push(headline: String, startTime: String, sub: String, detail: String,
-              speech: String? = nil) {
+              speech: String? = nil, chimes: Int = 3, tone: Tone = .lead) {
         showPanel(headline: headline, startTime: startTime, sub: sub, detail: detail,
-                  speech: speech)
+                  speech: speech, chimes: chimes, tone: tone)
 
         guard notificationsAllowed else { return }
         let content = UNMutableNotificationContent()
@@ -996,17 +1023,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     }
 
     func alertRoot(size: NSSize, headline: String, startTime: String,
-                   sub: String, detail: String) -> FlippedView {
+                   sub: String, detail: String, tone: Tone = .lead) -> FlippedView {
         let w = size.width, h = size.height
         let root = FlippedView(frame: NSRect(x: 0, y: 0, width: w, height: h))
         root.wantsLayer = true
         root.layer?.cornerRadius = 24
         root.layer?.cornerCurve = .continuous
         root.layer?.masksToBounds = true
-        root.layer?.backgroundColor = Palette.accent.cgColor
+        let c1 = tone == .lead ? Palette.accent : Palette.amber
+        let c2 = tone == .lead ? Palette.accent2 : Palette.amber2
+        root.layer?.backgroundColor = c1.cgColor
         if let g = CAGradientLayer() as CAGradientLayer? {
             g.frame = root.bounds
-            g.colors = [Palette.accent.cgColor, Palette.accent2.cgColor]
+            g.colors = [c1.cgColor, c2.cgColor]
             g.startPoint = CGPoint(x: 0, y: 0)
             g.endPoint = CGPoint(x: 1, y: 1)
             root.layer?.insertSublayer(g, at: 0)
@@ -1022,7 +1051,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             t.drawsBackground = false
             root.addSubview(t)
         }
-        let topText = detail.isEmpty ? "即将上课" : "即将上课 · \(detail)"
+        let kicker = tone == .lead ? "即将上课" : "现在上课"
+        let topText = detail.isEmpty ? kicker : "\(kicker) · \(detail)"
         label(topText, .systemFont(ofSize: 16, weight: .bold),
               NSColor(white: 1, alpha: 0.75), NSRect(x: 40, y: 24, width: 400, height: 22))
         label(headline, .systemFont(ofSize: 42, weight: .heavy), .white,
@@ -1066,7 +1096,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     }
 
     func showPanel(headline: String, startTime: String, sub: String, detail: String,
-                   speech: String?) {
+                   speech: String?, chimes: Int = 3, tone: Tone = .lead) {
         alertPanel?.close()
         alertSeq += 1
         let seq = alertSeq
@@ -1083,7 +1113,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         let root = alertRoot(size: NSSize(width: w, height: h), headline: headline,
-                             startTime: startTime, sub: sub, detail: detail)
+                             startTime: startTime, sub: sub, detail: detail, tone: tone)
         panel.contentView = root
         if let screen = NSScreen.main {
             let f = screen.visibleFrame
@@ -1094,7 +1124,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
 
         // 连响三遍 + 语音播报
         NSSound.beep()
-        for i in 0..<3 {
+        for i in 0..<chimes {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15 + Double(i) * 2.2) { [weak self] in
                 guard let self = self, self.alertSeq == seq else { return }
                 self.playChime()
@@ -1190,21 +1220,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         if !isSkipped(now) {
             for l in lessons(on: now) {
                 guard let startMin = minutes(l.start) else { continue }
-                let id = "\(key)#\(l.period)#\(l.klass)"
-                guard !fired.contains(id) else { continue }
+                let head = "\(l.klass) · \(l.subject)"
+                let detail = l.period > 0 ? "第\(l.period)节" : ""
                 let leadAt = startMin - lead
-                if nowMin >= leadAt && nowMin < startMin {
+
+                // ① 提前 N 分钟：大卡片 + 三连响 + 语音
+                let leadId = "\(key)#\(l.period)#\(l.klass)#lead"
+                if nowMin >= leadAt && nowMin < startMin && !fired.contains(leadId) {
                     let remain = startMin - nowMin
-                    let head = "\(l.klass) · \(l.subject)"
                     let sub = remain >= 2 ? "还有 \(remain) 分钟" : "马上就该上课了"
-                    let detail = l.period > 0 ? "第\(l.period)节" : ""
                     let speech = "\(spoken(l.klass))\(l.subject)课，\(spokenTime(l.start))上课，还有\(remain)分钟"
                     push(headline: head, startTime: l.start, sub: sub, detail: detail,
-                         speech: speech)
-                    log("提醒：\(head) · \(sub) · \(detail)")
-                    fired.append(id)
-                } else if nowMin >= startMin && nowMin < startMin + 5 {
-                    fired.append(id)
+                         speech: speech, chimes: 3, tone: .lead)
+                    log("提前提醒：\(head) · \(sub)")
+                    fired.append(leadId)
+                }
+
+                // ② 到点：再提醒一次，不语音，只响一声
+                let startId = "\(key)#\(l.period)#\(l.klass)#start"
+                if nowMin >= startMin && nowMin < startMin + 2 && !fired.contains(startId) {
+                    push(headline: head, startTime: l.start, sub: "\(l.end) 下课", detail: detail,
+                         speech: nil, chimes: 1, tone: .start)
+                    log("到点提醒：\(head) · 第\(l.period)节")
+                    fired.append(startId)
                 }
             }
         }

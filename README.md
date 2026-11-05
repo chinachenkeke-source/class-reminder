@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.3.0-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.4.0-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -29,12 +29,16 @@
 <sub>面板：下一节倒计时、今天（蓝灰）、明天（琥珀）</sub></p>
 
 <p align="center"><img src="preview-alert.png" width="540" alt="课前提醒"><br>
-<sub>课前提醒：置顶在所有窗口之上</sub></p>
+<sub>提前 15 分钟：蓝色卡片 + 三连响 + 语音播报</sub></p>
+
+<p align="center"><img src="preview-alert-start.png" width="540" alt="到点提醒"><br>
+<sub>到点：琥珀色卡片再提醒一次，只响一声、不语音</sub></p>
 
 ## ✨ 功能
 
 - 🕘 **菜单栏常驻**：不占 Dock，点一下就是课表
 - ⏰ **提前提醒**：5 / 10 / 15 / 20 / 30 分钟，点一下即生效
+- 🔔 **两次提醒**：提前 N 分钟蓝色卡片 + 语音；到点换琥珀色卡片再响一声，不语音
 - 🔊 **叫得住人**：大卡片置顶 + 连响三次 + 中文女声播报两遍
 - 🗓 **单双周**：按「第 1 周是哪天、那天算单周还是双周」自动推算，可手动切换
 - 🎨 **今天 / 明天分色**：蓝灰对琥珀，不会看混
@@ -43,7 +47,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.3.0.dmg`
+1. 到 Releases 下载 `ClassReminder-1.4.0.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -159,7 +163,9 @@ ClassReminder --parse x.csv      # 只校验 CSV 能不能读懂
 ClassReminder --import x.csv     # 无界面导入
 ClassReminder --voice            # 看当前用的中文嗓音
 ClassReminder --shot out.png     # 渲染面板预览图
-ClassReminder --shotalert o.png  # 渲染提醒预览图
+ClassReminder --shotalert o.png  # 渲染「提前」提醒预览图
+ClassReminder --shotstart o.png  # 渲染「到点」提醒预览图
+ClassReminder --teststart        # 立刻弹一个到点提醒（试样式）
 ClassReminder --shotbar o.png    # 渲染菜单栏示意
 ```
 
@@ -173,6 +179,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.4.0**（2026-11-05）：到点再提醒一次（琥珀卡片，不语音）
 - **v1.3.0**（2026-11-05）：图标重画（立体表盘），README 改用圆角展示版
 - **v1.2.1**（2026-11-05）：修掉图标外面的灰底板
 - **v1.2.0**（2026-11-05）：新增 App 图标
