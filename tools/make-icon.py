@@ -23,18 +23,13 @@ for i in range(2 * S):                       # 对角渐变
     t = i / (2 * S - 1)
     d.line([(0, i), (i, 0)], fill=lerp(TOP, BOT, t), width=3)
 
-pad = int(S * 0.052)
-radius = int(S * 0.2237)
-box = (pad, pad, S - pad, S - pad)
-mask = Image.new("L", (S, S), 0)
-ImageDraw.Draw(mask).rounded_rectangle(box, radius=radius, fill=255)
-
-icon = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-icon.paste(img, (0, 0), mask)
+# macOS 26 对「带 alpha 通道」的图标会当成旧版图标，垫一层灰底板；
+# 同时透明边距也会触发同样的处理。所以这里：铺满整张画布 + 最后转成无 alpha 的 RGB。
+icon = img.convert("RGBA")
 d = ImageDraw.Draw(icon)
 
-cx, cy = S // 2, int(S * 0.485)
-R = int(S * 0.285)
+cx, cy = S // 2, int(S * 0.5)
+R = int(S * 0.30)
 ring = int(S * 0.044)
 d.ellipse([cx - R, cy - R, cx + R, cy + R], outline=(255, 255, 255, 255), width=ring)
 
@@ -72,7 +67,7 @@ d.ellipse([ax - ar, ay - ar, ax + ar, ay + ar], fill=(255, 157, 10, 255))
 d.ellipse([ax - ar * 0.40, ay - ar * 0.40, ax + ar * 0.40, ay + ar * 0.40],
           fill=(255, 255, 255, 255))
 
-icon = icon.resize((1024, 1024), Image.LANCZOS)
+icon = icon.convert("RGB").resize((1024, 1024), Image.LANCZOS)
 icon.save(OUT)
 print("saved", OUT)
 

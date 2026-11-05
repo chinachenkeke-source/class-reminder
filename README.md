@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.2.0-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.2.1-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -43,7 +43,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.2.0.dmg`
+1. 到 Releases 下载 `ClassReminder-1.2.1.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -172,6 +172,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.2.1**（2026-11-05）：修掉图标外面的灰底板
 - **v1.2.0**（2026-11-05）：新增 App 图标
 - **v1.1.1**（2026-11-05）：修正第 5 节课时间（11:25–12:05）
 - **v1.1.0**（2026-11-05）：CSV 导入与模板、提醒卡片改版、提前分钟可选、菜单栏图标
