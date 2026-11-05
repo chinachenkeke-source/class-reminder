@@ -40,7 +40,9 @@ css = """
   ul{padding-left:1.6em} li{margin:5px 0}
 </style>
 """
-open(os.path.join(tmp, "readme.html"), "w").write(out.replace("<h1>", css + "<h1>", 1))
+doc = ("<!doctype html><html><head><meta charset='utf-8'>" + css +
+       "</head><body>" + out + "</body></html>")
+open(os.path.join(tmp, "readme.html"), "w").write(doc)
 PY
 
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
