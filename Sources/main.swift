@@ -829,7 +829,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                     self.push(headline: "\(l.klass) · \(l.subject)", startTime: l.start,
                               sub: "\(l.end) 下课",
                               detail: l.period > 0 ? "第\(l.period)节" : "",
-                              speech: nil, chimes: 1, tone: .start)
+                              speech: nil, chimes: 3, tone: .start)
                 }
                 log("测试：到点提醒")
             }
@@ -1236,11 +1236,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                     fired.append(leadId)
                 }
 
-                // ② 到点：再提醒一次，不语音，只响一声
+                // ② 到点：再提醒一次，不语音，响三声
                 let startId = "\(key)#\(l.period)#\(l.klass)#start"
                 if nowMin >= startMin && nowMin < startMin + 2 && !fired.contains(startId) {
                     push(headline: head, startTime: l.start, sub: "\(l.end) 下课", detail: detail,
-                         speech: nil, chimes: 1, tone: .start)
+                         speech: nil, chimes: 3, tone: .start)
                     log("到点提醒：\(head) · 第\(l.period)节")
                     fired.append(startId)
                 }
@@ -1423,7 +1423,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         DispatchQueue.main.asyncAfter(deadline: .now() + 15) { [weak self] in
             self?.push(headline: "\(l.klass) · \(l.subject)", startTime: l.start,
                        sub: "\(l.end) 下课", detail: detail,
-                       speech: nil, chimes: 1, tone: .start)
+                       speech: nil, chimes: 3, tone: .start)
             log("测试：到点提醒")
         }
     }
