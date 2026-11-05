@@ -753,6 +753,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             exit(0)
         }
 
+        if let i = CommandLine.arguments.firstIndex(of: "--shotbar"),
+           i + 1 < CommandLine.arguments.count {
+            renderStatusBar(to: CommandLine.arguments[i + 1])
+            exit(0)
+        }
+
         if let i = CommandLine.arguments.firstIndex(of: "--shotalert"),
            i + 1 < CommandLine.arguments.count {
             let root = alertRoot(size: NSSize(width: 620, height: 254),
@@ -1207,19 +1213,51 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         updateStatusTitle()
     }
 
+    func statusBarTitle() -> String {
+        guard let (l, date) = nextLesson() else { return " 无课" }
+        let tag = Calendar.current.isDateInToday(date) ? "" : "\(weekdayNames[weekdayNumber(date)]) "
+        return " \(tag)\(l.start) \(l.klass)"
+    }
+
     func updateStatusTitle() {
         guard let button = statusItem?.button else { return }
-        guard let (l, date) = nextLesson() else {
-            button.title = " 无课"
-            return
+        button.title = statusBarTitle()
+        if let (l, _) = nextLesson() {
+            button.toolTip = "下一节：\(l.klass) \(l.subject) \(l.start)–\(l.end)"
         }
-        let tag = Calendar.current.isDateInToday(date) ? "" : "\(weekdayNames[weekdayNumber(date)]) "
-        button.title = " \(tag)\(l.start) \(l.klass)"
-        button.toolTip = "下一节：\(l.klass) \(l.subject) \(l.start)–\(l.end)"
         if lastTitleLogged != button.title {
             lastTitleLogged = button.title
             log("菜单栏显示：\(button.title)")
         }
+    }
+
+    /// 画一张菜单栏示意图（真截图需要屏幕录制权限）
+    func renderStatusBar(to path: String) {
+        let w: CGFloat = 420, h: CGFloat = 44
+        let root = FlippedView(frame: NSRect(x: 0, y: 0, width: w, height: h))
+        root.wantsLayer = true
+        let barColor = dyn(NSColor(srgbRed: 0.965, green: 0.965, blue: 0.973, alpha: 1),
+                           NSColor(srgbRed: 0.145, green: 0.145, blue: 0.157, alpha: 1))
+        root.layer?.backgroundColor = barColor.cgColor
+
+        let icon = NSImageView(frame: NSRect(x: w - 168, y: 13, width: 17, height: 17))
+        icon.image = NSImage(systemSymbolName: "clock.fill", accessibilityDescription: nil)
+        icon.contentTintColor = .labelColor
+        icon.imageScaling = .scaleProportionallyDown
+        root.addSubview(icon)
+
+        let t = NSTextField(labelWithString: statusBarTitle().trimmingCharacters(in: .whitespaces))
+        t.font = NSFont.monospacedDigitSystemFont(ofSize: 12.5, weight: .medium)
+        t.textColor = .labelColor
+        t.frame = NSRect(x: w - 146, y: 12, width: 140, height: 18)
+        root.addSubview(t)
+
+        let sep = NSView(frame: NSRect(x: w - 6, y: 8, width: 1, height: h - 16))
+        sep.wantsLayer = true
+        sep.layer?.backgroundColor = NSColor.separatorColor.cgColor
+        root.addSubview(sep)
+
+        dumpView(root, to: path)
     }
 
     // MARK: 弹窗
