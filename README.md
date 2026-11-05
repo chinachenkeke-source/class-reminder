@@ -1,6 +1,6 @@
 # ⏰ 上课提醒 · ClassReminder
 
-![version](https://img.shields.io/badge/version-1.1.0-blue) ![platform](https://img.shields.io/badge/macOS-13%2B-black) ![swift](https://img.shields.io/badge/Swift-5-orange) ![deps](https://img.shields.io/badge/dependencies-0-green)
+![version](https://img.shields.io/badge/version-1.1.0-blue) ![platform](https://img.shields.io/badge/macOS-13%2B-black) ![swift](https://img.shields.io/badge/Swift-5-orange) ![deps](https://img.shields.io/badge/dependencies-0-green) ![license](https://img.shields.io/badge/license-MIT-green)
 
 > 一节课快开始时，在屏幕**右上角**弹出一张大卡片，连响三声，再用中文女声念：
 > **「九三班历史课，11点20分上课，还有15分钟」**
@@ -161,4 +161,4 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 ## 📄 许可
 
-暂未指定。要开源（MIT / Apache-2.0）说一声，我加 LICENSE。
+[MIT](LICENSE) © 2026 陈可 —— 随便用、改、商用，保留版权声明即可。
