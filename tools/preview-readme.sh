@@ -47,8 +47,32 @@ CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 [ -x "$CHROME" ] || { echo "没找到 Google Chrome"; exit 1; }
 
 "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
-  --force-device-scale-factor=2 --window-size=980,5000 \
+  --force-device-scale-factor=2 --window-size=980,8000 \
   --screenshot="$TMP/shot.png" "file://$TMP/readme.html" >/dev/null 2>&1
 
-cp "$TMP/shot.png" "$OUT"
-echo "已渲染：$OUT"
+# 裁掉底部空白（需要 Pillow；没有就直接整张）
+PYBIN=""
+for cand in python3 /Users/mac/.dsh/dsh-runtimes/dsh-primary-runtime/dependencies/python/bin/python3; do
+  if "$cand" -c "import PIL" >/dev/null 2>&1; then PYBIN="$cand"; break; fi
+done
+
+if [ -n "$PYBIN" ]; then
+  "$PYBIN" - "$TMP/shot.png" "$OUT" <<'PY2'
+import sys
+from PIL import Image
+src, dst = sys.argv[1], sys.argv[2]
+im = Image.open(src).convert("RGB")
+w, h = im.size
+px = im.load()
+bottom = h
+for y in range(h - 1, -1, -4):
+    if not all(px[x, y] == (255, 255, 255) for x in range(0, w, 8)):
+        bottom = min(h, y + 80)
+        break
+im.crop((0, 0, w, bottom)).save(dst)
+print("已渲染：%s  (%dx%d)" % (dst, w, bottom))
+PY2
+else
+  cp "$TMP/shot.png" "$OUT"
+  echo "已渲染：$OUT（没装 Pillow，底部空白未裁）"
+fi
