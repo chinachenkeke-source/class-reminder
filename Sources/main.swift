@@ -458,20 +458,113 @@ struct CSVError: LocalizedError {
     var errorDescription: String? { msg }
 }
 
+/// 读 xlsx 里的共享字符串表
+final class SharedStringsParser: NSObject, XMLParserDelegate {
+    var strings: [String] = []
+    private var cur: String?
+    private var inT = false
+    private var buf = ""
+
+    func parse(_ data: Data) -> [String] {
+        let p = XMLParser(data: data)
+        p.delegate = self
+        p.parse()
+        return strings
+    }
+
+    func parser(_ p: XMLParser, didStartElement name: String, namespaceURI: String?,
+                qualifiedName: String?, attributes: [String: String]) {
+        if name == "si" { cur = "" }
+        if name == "t" { inT = true; buf = "" }
+    }
+
+    func parser(_ p: XMLParser, foundCharacters s: String) { if inT { buf += s } }
+
+    func parser(_ p: XMLParser, didEndElement name: String, namespaceURI: String?,
+                qualifiedName: String?) {
+        if name == "t" { inT = false; cur = (cur ?? "") + buf }
+        if name == "si" { strings.append(cur ?? ""); cur = nil }
+    }
+}
+
+/// 读一张工作表：把单元格按列号填成 [[String]]
+final class SheetParser: NSObject, XMLParserDelegate {
+    var rows: [[String]] = []
+    private var row: [String] = []
+    private var rowMaxCol = 0
+    private var cellCol = 0
+    private var cellType = ""
+    private var buf = ""
+    private var inValue = false
+    let shared: [String]
+
+    init(shared: [String]) { self.shared = shared }
+
+    func parse(_ data: Data) -> [[String]] {
+        let p = XMLParser(data: data)
+        p.delegate = self
+        p.parse()
+        return rows
+    }
+
+    private func columnIndex(_ ref: String) -> Int {
+        var n = 0
+        for ch in ref.uppercased() {
+            guard let v = ch.unicodeScalars.first?.value, v >= 65, v <= 90 else { break }
+            n = n * 26 + Int(v - 64)
+        }
+        return max(0, n - 1)
+    }
+
+    func parser(_ p: XMLParser, didStartElement name: String, namespaceURI: String?,
+                qualifiedName: String?, attributes: [String: String]) {
+        switch name {
+        case "row":
+            row = []; rowMaxCol = 0
+        case "c":
+            cellCol = columnIndex(attributes["r"] ?? "A1")
+            cellType = attributes["t"] ?? ""
+            buf = ""; inValue = false
+        case "v", "t":
+            inValue = true; buf = ""
+        default:
+            break
+        }
+    }
+
+    func parser(_ p: XMLParser, foundCharacters s: String) { if inValue { buf += s } }
+
+    func parser(_ p: XMLParser, didEndElement name: String, namespaceURI: String?,
+                qualifiedName: String?) {
+        switch name {
+        case "v", "t":
+            inValue = false
+        case "c":
+            var value = buf
+            if cellType == "s", let i = Int(value), i < shared.count { value = shared[i] }
+            while row.count <= cellCol { row.append("") }
+            row[cellCol] = value
+            rowMaxCol = max(rowMaxCol, cellCol)
+        case "row":
+            while row.count <= rowMaxCol { row.append("") }
+            rows.append(row)
+        default:
+            break
+        }
+    }
+}
+
 enum TimetableIO {
 
-    static let template = """
-    星期,节次,开始时间,结束时间,班级,科目,周次
-    周一,第3节,09:25,10:05,九1班,历史,每周
-    周二,第4节,10:30,11:10,九3班,历史,单周
-    周二,第4节,10:30,11:10,九3班,历史,双周
-    周五,早读,07:30,07:50,七1/八2班,历史早读,单周
-    """
-
-    /// 写模板（带 BOM，Excel 打开中文不乱码）
+    /// 从 App 包里把 xlsx 模板复制出去
     static func writeTemplate(to url: URL) throws {
-        let text = "\u{FEFF}" + template.replacingOccurrences(of: "\n", with: "\r\n") + "\r\n"
-        try text.data(using: .utf8)!.write(to: url)
+        guard let src = Bundle.main.url(forResource: "课表模板", withExtension: "xlsx") else {
+            throw CSVError(msg: "App 里没找到模板文件")
+        }
+        if FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.removeItem(at: url)
+        }
+        try FileManager.default.copyItem(at: src, to: url)
     }
 
     static func decode(_ data: Data) -> String? {
@@ -481,8 +574,7 @@ enum TimetableIO {
         }
         let gb = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(
             CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
-        if let s = String(data: data, encoding: gb) { return s }
-        return nil
+        return String(data: data, encoding: gb)
     }
 
     static func splitRows(_ text: String) -> [[String]] {
@@ -516,6 +608,76 @@ enum TimetableIO {
         if !field.isEmpty || !row.isEmpty { row.append(field); rows.append(row) }
         return rows.filter { r in r.contains { !$0.trimmingCharacters(in: .whitespaces).isEmpty } }
     }
+
+    // MARK: xlsx
+
+    static func xlsxRows(url: URL) throws -> [[String]] {
+        let fm = FileManager.default
+        let tmp = fm.temporaryDirectory.appendingPathComponent("cr-xlsx-\(UUID().uuidString)")
+        try? fm.createDirectory(at: tmp, withIntermediateDirectories: true)
+        defer { try? fm.removeItem(at: tmp) }
+
+        let unzip = Process()
+        unzip.executableURL = URL(fileURLWithPath: "/usr/bin/unzip")
+        unzip.arguments = ["-o", "-q", url.path, "-d", tmp.path]
+        unzip.standardError = FileHandle.nullDevice
+        unzip.standardOutput = FileHandle.nullDevice
+        do { try unzip.run() } catch { throw CSVError(msg: "这个文件不是有效的 xlsx") }
+        unzip.waitUntilExit()
+
+        var shared: [String] = []
+        if let d = try? Data(contentsOf: tmp.appendingPathComponent("xl/sharedStrings.xml")) {
+            shared = SharedStringsParser().parse(d)
+        }
+
+        // 找叫「课表」的工作表，没有就用第一个
+        var sheetFile = "xl/worksheets/sheet1.xml"
+        let wbURL = tmp.appendingPathComponent("xl/workbook.xml")
+        let relURL = tmp.appendingPathComponent("xl/_rels/workbook.xml.rels")
+        if let wbData = try? Data(contentsOf: wbURL),
+           let relData = try? Data(contentsOf: relURL),
+           let wbStr = String(data: wbData, encoding: .utf8),
+           let relStr = String(data: relData, encoding: .utf8) {
+            var sheets: [(name: String, rid: String)] = []
+            if let re = try? NSRegularExpression(
+                pattern: "<sheet[^>]*?name=\"([^\"]+)\"[^>]*?r:id=\"(rId\\d+)\"") {
+                let full = NSRange(wbStr.startIndex..., in: wbStr)
+                for m in re.matches(in: wbStr, range: full) {
+                    let name = (wbStr as NSString).substring(with: m.range(at: 1))
+                    let rid = (wbStr as NSString).substring(with: m.range(at: 2))
+                    sheets.append((name, rid))
+                }
+            }
+            let chosen = sheets.first(where: { $0.name.contains("课表") }) ?? sheets.first
+            if let chosen = chosen, let picked = relTarget(relStr, id: chosen.rid) {
+                sheetFile = picked
+            }
+        }
+
+        guard let data = try? Data(contentsOf: tmp.appendingPathComponent(sheetFile)) else {
+            throw CSVError(msg: "读不到 xlsx 里的工作表")
+        }
+        return SheetParser(shared: shared).parse(data)
+    }
+
+    /// 在 xlsx 的 rels 里按 Id 找 Target（属性顺序不固定，Target 可能在前）
+    static func relTarget(_ relStr: String, id: String) -> String? {
+        guard let tagRe = try? NSRegularExpression(pattern: "<Relationship[^>]*>") else { return nil }
+        let full = NSRange(relStr.startIndex..., in: relStr)
+        for m in tagRe.matches(in: relStr, range: full) {
+            let tag = (relStr as NSString).substring(with: m.range)
+            guard tag.contains("Id=\"\(id)\"") else { continue }
+            guard let tRe = try? NSRegularExpression(pattern: "Target=\"([^\"]+)\""),
+                  let tm = tRe.firstMatch(in: tag, range: NSRange(tag.startIndex..., in: tag))
+            else { continue }
+            var t = (tag as NSString).substring(with: tm.range(at: 1))
+            if t.hasPrefix("/") { t = String(t.dropFirst()) } else { t = "xl/" + t }
+            return t
+        }
+        return nil
+    }
+
+    // MARK: 字段解析
 
     static func columnKey(_ h: String) -> String? {
         let t = h.trimmingCharacters(in: .whitespaces).lowercased()
@@ -560,6 +722,9 @@ enum TimetableIO {
             guard p.count >= 2, let hh = Int(p[0]), let mm = Int(p[1]),
                   (0...23).contains(hh), (0...59).contains(mm) else { return nil }
             h = hh; m = mm
+        } else if let v = Double(t), v >= 0, v < 1 {        // Excel 把时间存成 0~1 的小数
+            let total = Int((v * 24 * 60).rounded())
+            h = total / 60; m = total % 60
         } else {
             let d = t.filter { $0.isNumber }
             if d.count == 3 { h = Int(d.prefix(1))!; m = Int(d.suffix(2))! }
@@ -578,15 +743,25 @@ enum TimetableIO {
         return [nil]
     }
 
-    /// 返回 (课程, 错误)
+    // MARK: 统一解析
+
     static func parse(url: URL) throws -> [Lesson] {
-        guard let data = try? Data(contentsOf: url) else {
-            throw CSVError(msg: "读不到这个文件：\(url.lastPathComponent)")
+        let rows: [[String]]
+        if url.pathExtension.lowercased() == "xlsx" {
+            rows = try xlsxRows(url: url)
+        } else {
+            guard let data = try? Data(contentsOf: url) else {
+                throw CSVError(msg: "读不到这个文件：\(url.lastPathComponent)")
+            }
+            guard let raw = decode(data) else {
+                throw CSVError(msg: "文件编码看不懂，请另存为 UTF-8 的 CSV，或者用模板 xlsx")
+            }
+            rows = splitRows(raw)
         }
-        guard let raw = decode(data) else {
-            throw CSVError(msg: "文件编码看不懂，请用 Excel／Numbers 另存为 UTF-8 的 CSV")
-        }
-        let rows = splitRows(raw)
+        return try parseRows(rows)
+    }
+
+    static func parseRows(_ rows: [[String]]) throws -> [Lesson] {
         guard !rows.isEmpty else { throw CSVError(msg: "文件是空的") }
 
         var idx: [String: Int] = [:]
@@ -599,8 +774,8 @@ enum TimetableIO {
         } else {
             idx = ["weekday": 0, "period": 1, "start": 2, "end": 3, "klass": 4, "subject": 5, "weeks": 6]
         }
-        guard let _ = idx["weekday"], let _ = idx["klass"] else {
-            throw CSVError(msg: "缺少必需列。模板表头是：星期,节次,开始时间,结束时间,班级,科目,周次")
+        guard idx["weekday"] != nil, idx["klass"] != nil else {
+            throw CSVError(msg: "缺少必需列。表头是：星期, 节次, 开始时间, 结束时间, 班级, 科目, 周次")
         }
 
         var lessons: [Lesson] = []
@@ -636,7 +811,7 @@ enum TimetableIO {
                 problems.append("第 \(line) 行：班级是空的")
                 continue
             }
-            for w in weeks(cell("weeks")) where true {
+            for w in weeks(cell("weeks")) {
                 lessons.append(Lesson(weekday: wd, period: pd, start: st, end: et,
                                       klass: klass, subject: subject, weeks: w))
             }
@@ -692,6 +867,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         try? fm.createDirectory(at: supportDir, withIntermediateDirectories: true)
         seedIfNeeded()
         loadTable()
+
+        if let i = CommandLine.arguments.firstIndex(of: "--dumprows"),
+           i + 1 < CommandLine.arguments.count {
+            let url = URL(fileURLWithPath: CommandLine.arguments[i + 1])
+            let rows: [[String]]
+            if url.pathExtension.lowercased() == "xlsx" {
+                rows = (try? TimetableIO.xlsxRows(url: url)) ?? []
+            } else {
+                let d = (try? Data(contentsOf: url)) ?? Data()
+                rows = TimetableIO.splitRows(TimetableIO.decode(d) ?? "")
+            }
+            print("rows=\(rows.count)")
+            for (n, r) in rows.prefix(8).enumerated() {
+                print(n, r)
+            }
+            exit(0)
+        }
 
         if let i = CommandLine.arguments.firstIndex(of: "--parse"),
            i + 1 < CommandLine.arguments.count {
@@ -1364,8 +1556,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
-        panel.message = "选你填好的课表（CSV 模板，或本 App 导出的 timetable.json）"
-        panel.allowedContentTypes = [.commaSeparatedText, .plainText, .json]
+        panel.message = "选你填好的课表（xlsx 模板 / CSV，或本 App 导出的 timetable.json）"
+        var types: [UTType] = [.commaSeparatedText, .plainText, .json]
+        if let xlsx = UTType(filenameExtension: "xlsx") { types.append(xlsx) }
+        panel.allowedContentTypes = types
         guard panel.runModal() == .OK, let url = panel.url else { return }
 
         if url.pathExtension.lowercased() == "json" {

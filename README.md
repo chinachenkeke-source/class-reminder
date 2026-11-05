@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.4.4-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.5.0-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -47,7 +47,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.4.4.dmg`
+1. 到 Releases 下载 `ClassReminder-1.5.0.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -102,44 +102,43 @@
 | `anchorIsOdd` | 第 1 周算单周还是双周 |
 | `skipDates` | 放假、调休的日期，那天完全不提醒 |
 
-## 📥 用模板填课表
+## 📥 用自己的课表（导入）
 
-面板里点「下载模板」得到 `课表模板.csv`，用 Excel 或 Numbers 打开：
+面板里点「下载模板」，得到 `课表模板.xlsx`，里面两页：
 
-| 星期 | 节次 | 开始时间 | 结束时间 | 班级 | 科目 | 周次 |
-|---|---|---|---|---|---|---|
-| 周一 | 第3节 | 09:25 | 10:05 | 九1班 | 历史 | 每周 |
-| 周二 | 第4节 | 10:30 | 11:10 | 九3班 | 历史 | 单周 |
-| 周二 | 第4节 | 10:30 | 11:10 | 九3班 | 历史 | 双周 |
-| 周五 | 早读 | 07:30 | 07:50 | 七1/八2班 | 历史早读 | 单周 |
+| 工作表 | 干什么用 |
+|---|---|
+| 填写说明 | 三句话看懂 + 每列怎么填 + 单双周怎么填 + 例子 |
+| 课表 | 只有表头，**星期 / 节次 / 周次 都是下拉选择**，填 200 行不用记格式 |
 
-写法很宽松，下面这些都能认：
+填完回 App 点「导入课表」选这个文件，菜单栏和提醒立刻换成你的课表。
 
-- 星期：`周一`、`星期一`、`1`、`Mon`
-- 节次：`第5节`、`5`、`早读`、`晚读`、`晚自习`
-- 时间：`07:50`、`7:50`、`0750`、`7点50`
-- 周次：`每周`（不写也行）、`单周`、`双周`、`单双周`（自动拆两条）
-- 带逗号的内容用英文引号包起来：`"九3班,培优"`
+**单双周是可选的**，不是所有人都有：
 
-填完点「导入课表」选文件。写错会提示「第 N 行：……」，不会动你现有的课表。
-表头顺序可以调，多余的列会被忽略。
+- 学校不分单双周 → 周次全选「每周」，或者**留空**（留空 = 每周都上）
+- 单周、双周上的课不一样 → 同一节填两行，一行「单周」一行「双周」
+- 单双周都上 → 选「单双周」，导入时自动拆成两节
+
+也支持 CSV：同样的七列，用 Excel 另存为 CSV 再导入一样能用。
 
 ## 🗂 目录结构
 
 ```
-Sources/main.swift    全部源码：课表逻辑 / 菜单栏 / 面板 / 提醒 / CSV 导入
+Sources/main.swift    全部源码：课表逻辑 / 菜单栏 / 面板 / 提醒 / CSV·xlsx 导入
 Info.plist            App 信息（LSUIElement = 菜单栏模式）
 timetable.json        示例课表，首次运行会复制成用户数据
-课表模板.csv           空白模板
-课表示例.csv           填好的完整例子（27 条）
+课表模板.xlsx          空白模板（带下拉选择）
+课表示例.csv           填好的 CSV 例子（27 条）
 build.sh              一键编译 + 安装
 preview.png           面板截图
-preview-alert.png     提醒截图
+preview-alert.png     提前提醒截图（蓝）
+preview-alert-start.png  到点提醒截图（琥珀）
 statusbar.png         菜单栏示意
 AppIcon.icns          应用图标（读入 .app 用）
 AppIcon.png           图标 1024 原图（无 alpha，打进 .app）
 AppIcon-rounded.png   带圆角的展示版（README 用）
 tools/make-icon.py    生成图标的脚本
+tools/make-template.py 生成 xlsx 模板的脚本
 CHANGELOG.md          更新日志
 ```
 
@@ -159,7 +158,9 @@ CHANGELOG.md          更新日志
 
 ```bash
 ClassReminder --dump             # 打印未来 8 天课表
-ClassReminder --parse x.csv      # 只校验 CSV 能不能读懂
+ClassReminder --parse x.csv      # 只校验 CSV / xlsx 能不能读懂
+ClassReminder --template o.xlsx  # 生成一份空白模板
+ClassReminder --dumprows x.xlsx  # 打印解析出来的每一行，排查用
 ClassReminder --import x.csv     # 无界面导入
 ClassReminder --voice            # 看当前用的中文嗓音
 ClassReminder --shot out.png     # 渲染面板预览图
@@ -179,6 +180,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.5.0**（2026-11-05）：课表模板改成 xlsx（带下拉选择），支持直接导入
 - **v1.4.4**（2026-11-05）：到点提醒改成响三声
 - **v1.4.3**（2026-11-05）：测试连播间隔改成 15 秒
 - **v1.4.2**（2026-11-05）：测试连播间隔改成 10 秒

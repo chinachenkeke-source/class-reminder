@@ -15,6 +15,7 @@ swiftc -O -swift-version 5 Sources/main.swift -o "$OUT/Contents/MacOS/$BIN"
 
 cp Info.plist "$OUT/Contents/Info.plist"
 cp timetable.json "$OUT/Contents/Resources/timetable.json"
+[ -f 课表模板.xlsx ] && cp 课表模板.xlsx "$OUT/Contents/Resources/课表模板.xlsx"
 [ -f AppIcon.icns ] && cp AppIcon.icns "$OUT/Contents/Resources/AppIcon.icns"
 
 echo "==> 临时签名"
