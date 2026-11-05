@@ -1,12 +1,22 @@
-# ⏰ 上课提醒 · ClassReminder
+<h1 align="center">⏰ 上课提醒 · ClassReminder</h1>
 
-![version](https://img.shields.io/badge/version-1.1.0-blue) ![platform](https://img.shields.io/badge/macOS-13%2B-black) ![swift](https://img.shields.io/badge/Swift-5-orange) ![deps](https://img.shields.io/badge/dependencies-0-green) ![license](https://img.shields.io/badge/license-MIT-green)
+<p align="center">
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.1.0-blue" alt="version"></a>
+  <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
+  <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
+  <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
+</p>
 
-> 一节课快开始时，在屏幕**右上角**弹出一张大卡片，连响三声，再用中文女声念：
-> **「九三班历史课，11点20分上课，还有15分钟」**
+<p align="center">
+  一节课快开始时，在屏幕<strong>右上角</strong>弹出一张大卡片，连响三声，再用中文女声念：<br>
+  <strong>「九三班历史课，11点20分上课，还有15分钟」</strong>
+</p>
 
-写给一线老师的 macOS 菜单栏工具。支持单双周课表、CSV 导入自己的课、开机自启。
-单文件 Swift，零第三方依赖，不联网。
+<p align="center">
+  写给一线老师的 macOS 菜单栏工具 · 支持单双周课表、CSV 导入、开机自启<br>
+  单文件 Swift，零第三方依赖，不联网
+</p>
 
 ## 📸 界面
 
