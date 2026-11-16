@@ -1171,6 +1171,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             exit(0)
         }
 
+        if let i = CommandLine.arguments.firstIndex(of: "--day"),
+           i + 1 < CommandLine.arguments.count,
+           let d = parseDate(CommandLine.arguments[i + 1]) {
+            print("\(dateKey(d)) \(weekdayNames[weekdayNumber(d)]) \(weekLabel(d))")
+            for l in lessonsOn(date: d) {
+                print("  \(l.start)-\(l.end) \(l.klass) \(l.subject) weeks=\(l.weeks ?? "all")")
+            }
+            exit(0)
+        }
+
         if let i = CommandLine.arguments.firstIndex(of: "--shotcal"),
            i + 1 < CommandLine.arguments.count {
             viewMode = .calendar
