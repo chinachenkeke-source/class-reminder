@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.10.0-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.10.1-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -50,7 +50,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.10.0.dmg`
+1. 到 Releases 下载 `ClassReminder-1.10.1.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -182,6 +182,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.10.1**（2026-11-16）：日历圆点全部显示，不再只显示 3 个
 - **v1.10.0**（2026-11-16）：日历按课型分色（正课红、早读晚读晚自习培优蓝）
 - **v1.9.0**（2026-11-16）：日历可翻任意年份（1900–2100），不再限制在学期内
 - **v1.8.0**（2026-11-16）：日历加农历与节气（万年历）

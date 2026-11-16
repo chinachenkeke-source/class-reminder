@@ -660,11 +660,18 @@ final class ScheduleView: FlippedView {
                       subColor, NSRect(x: 0, y: 23, width: frame.width, height: 13), align: .center)
             }
 
-            // 有课：底部小圆点（一节一个，最多 3 个；正课红、其余蓝）
+            // 有课：底部小圆点（一节一个，全部显示；正课红、其余蓝）
             if inTerm && !items.isEmpty {
-                let n = min(items.count, 3)
-                let dotW: CGFloat = 4.5, gap: CGFloat = 3
-                let totalW = CGFloat(n) * dotW + CGFloat(n - 1) * gap
+                let n = items.count
+                var dotW: CGFloat = 4.5
+                var gap: CGFloat = 3
+                let maxW = frame.width - 8
+                // 节数多就自动缩点，保证都在格子里
+                if CGFloat(n) * dotW + CGFloat(max(0, n - 1)) * gap > maxW {
+                    gap = 2
+                    dotW = max(1.8, (maxW - CGFloat(max(0, n - 1)) * gap) / CGFloat(n))
+                }
+                let totalW = CGFloat(n) * dotW + CGFloat(max(0, n - 1)) * gap
                 for d in 0..<n {
                     let lesson = items[d]
                     let base = owner.isRegular(lesson) ? Palette.regular : Palette.accent
