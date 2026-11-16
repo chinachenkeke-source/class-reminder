@@ -213,6 +213,7 @@ final class ScheduleView: FlippedView {
     private func build() {
         switch owner?.viewMode ?? .schedule {
         case .calendar: buildCalendar()
+        case .settings: buildSettings()
         case .schedule: buildSchedule()
         }
     }
@@ -361,7 +362,7 @@ final class ScheduleView: FlippedView {
             ("导入课表", #selector(AppDelegate.importTimetable)),
             ("下载模板", #selector(AppDelegate.exportTemplate)),
             ("测试提醒", #selector(AppDelegate.testAlert)),
-            ("打开课表", #selector(AppDelegate.openTable)),
+            ("设置", #selector(AppDelegate.openSettings)),
             ("切周次", #selector(AppDelegate.toggleWeek)),
             ("退出", #selector(AppDelegate.quit))
         ]
@@ -371,6 +372,124 @@ final class ScheduleView: FlippedView {
             footerButton(it.0, x: pad + (bw + gap) * CGFloat(i), y: y, w: bw, action: it.1)
         }
         y += 20 + pad
+
+        setFrameSize(NSSize(width: ScheduleView.W, height: y))
+    }
+
+    // MARK: 设置
+
+    private func buildSettings() {
+        guard let owner = owner else { return }
+        var y: CGFloat = 14
+
+        label(self, "设置", .systemFont(ofSize: 20, weight: .bold), .labelColor,
+              NSRect(x: pad, y: y - 4, width: 120, height: 26))
+        y += 34
+
+        func rowLabel(_ text: String, _ sub: String, _ y: CGFloat) {
+            label(self, text, .systemFont(ofSize: 13, weight: .semibold), .labelColor,
+                  NSRect(x: pad, y: y, width: 90, height: 18))
+            label(self, sub, .systemFont(ofSize: 10.5), .tertiaryLabelColor,
+                  NSRect(x: pad, y: y + 17, width: 150, height: 14))
+        }
+
+        func stepper(_ y: CGFloat, _ value: String, _ minus: @escaping () -> Void,
+                     _ plus: @escaping () -> Void, canMinus: Bool = true, canPlus: Bool = true,
+                     width: CGFloat = 168) {
+            let x = ScheduleView.W - pad - width
+            let h: CGFloat = 28
+            for (i, item) in [("‹", minus, canMinus, 0), (value, {}, true, 1), ("›", plus, canPlus, 2)].enumerated() {
+                let w: CGFloat = i == 1 ? width - 60 : 28
+                let cx = x + (i == 0 ? 0 : (i == 1 ? 30 : width - 28))
+                let chip = Chip(frame: NSRect(x: cx, y: y, width: w, height: h))
+                chip.wantsLayer = true
+                chip.layer?.cornerRadius = 8
+                chip.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(i == 1 ? 0.08 : 0.14).cgColor
+                let enabled = i == 0 ? canMinus : (i == 2 ? canPlus : false)
+                let color: NSColor = i == 1 ? .labelColor
+                    : (enabled ? .labelColor : NSColor.tertiaryLabelColor)
+                label(chip, item.0, .systemFont(ofSize: i == 1 ? 13 : 15,
+                                                weight: i == 1 ? .semibold : .medium),
+                      color,
+                      NSRect(x: 0, y: 5, width: w, height: 18), align: .center)
+                if enabled { chip.onTap = item.1 }
+                addSubview(chip)
+            }
+        }
+
+        // 学期开始
+        rowLabel("学期开始", "第 1 周的周一", y)
+        stepper(y, dateKey(owner.semesterStart), { [weak owner] in owner?.setSemesterStart(shiftWeeks: -1) },
+                { [weak owner] in owner?.setSemesterStart(shiftWeeks: 1) })
+        y += 44
+
+        // 学期周数
+        let weeks = owner.semesterWeeks
+        rowLabel("学期周数", "日历只显示这段", y)
+        stepper(y, "\(weeks) 周", { [weak owner] in owner?.setSemesterWeeks(weeks - 1) },
+                { [weak owner] in owner?.setSemesterWeeks(weeks + 1) },
+                canMinus: weeks > 1, canPlus: weeks < 30)
+        y += 44
+
+        // 第 1 周是单周还是双周
+        rowLabel("第 1 周", "单双周从这周起算", y)
+        let segX = ScheduleView.W - pad - 168
+        for (i, item) in [("单周", true), ("双周", false)].enumerated() {
+            let isOn = (owner.table.anchorIsOdd ?? true) == item.1
+            let w: CGFloat = 80
+            let chip = Chip(frame: NSRect(x: segX + (i == 0 ? 0 : 84), y: y, width: w, height: 28))
+            chip.wantsLayer = true
+            chip.layer?.cornerRadius = 8
+            chip.layer?.backgroundColor = isOn ? Palette.accent.cgColor
+                : NSColor.secondaryLabelColor.withAlphaComponent(0.1).cgColor
+            label(chip, item.0, .systemFont(ofSize: 13, weight: isOn ? .bold : .medium),
+                  isOn ? .white : .secondaryLabelColor,
+                  NSRect(x: 0, y: 5, width: w, height: 18), align: .center)
+            if !isOn { chip.onTap = { [weak owner] in owner?.setAnchorOdd(item.1) } }
+            addSubview(chip)
+        }
+        y += 46
+
+        // 说明
+        let note = card(NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 76),
+                        Palette.todayCard, radius: 12, border: Palette.todayBorder)
+        label(note, "学期范围：", .systemFont(ofSize: 11.5, weight: .semibold), .secondaryLabelColor,
+              NSRect(x: 14, y: 12, width: 80, height: 16))
+        label(note, "\(dateKey(owner.semesterStart))  起 \(weeks) 周", .systemFont(ofSize: 12),
+              .labelColor, NSRect(x: 90, y: 12, width: 240, height: 16))
+        label(note, "到 \(dateKey(owner.semesterEnd)) 结束", .systemFont(ofSize: 11.5),
+              .secondaryLabelColor, NSRect(x: 14, y: 32, width: 300, height: 16))
+        label(note, "日历只用这段，改完立刻生效", .systemFont(ofSize: 11),
+              .tertiaryLabelColor, NSRect(x: 14, y: 50, width: 300, height: 14))
+        y += 76 + 14
+
+        // 次要操作
+        func textChip(_ title: String, _ x: CGFloat, _ w: CGFloat, _ y: CGFloat,
+                      _ action: @escaping () -> Void) {
+            let chip = Chip(frame: NSRect(x: x, y: y, width: w, height: 26))
+            chip.wantsLayer = true
+            chip.layer?.cornerRadius = 8
+            chip.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.12).cgColor
+            label(chip, title, .systemFont(ofSize: 11.5, weight: .medium), .secondaryLabelColor,
+                  NSRect(x: 0, y: 5, width: w, height: 16), align: .center)
+            chip.onTap = action
+            addSubview(chip)
+        }
+
+        textChip("打开课表文件", pad, 108, y) { [weak owner] in owner?.openTable() }
+        textChip("恢复默认", pad + 116, 84, y) { [weak owner] in owner?.resetSemesterDefaults() }
+        y += 36
+
+        // 返回
+        let back = Chip(frame: NSRect(x: pad, y: y, width: 88, height: 28))
+        back.wantsLayer = true
+        back.layer?.cornerRadius = 8
+        back.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.12).cgColor
+        label(back, "‹ 返回", .systemFont(ofSize: 12, weight: .semibold), .secondaryLabelColor,
+              NSRect(x: 0, y: 5, width: 88, height: 18), align: .center)
+        back.onTap = { [weak owner] in owner?.closeSettings() }
+        addSubview(back)
+        y += 28 + pad
 
         setFrameSize(NSSize(width: ScheduleView.W, height: y))
     }
@@ -554,6 +673,8 @@ final class ScheduleView: FlippedView {
         y += 12
         navChip(NSRect(x: pad, y: y, width: 104, height: 28), "‹ 回到课表",
                 .systemFont(ofSize: 12, weight: .semibold)) { [weak owner] in owner?.closeCalendar() }
+        navChip(NSRect(x: pad + 112, y: y, width: 64, height: 28), "设置",
+                .systemFont(ofSize: 12, weight: .semibold)) { [weak owner] in owner?.openSettings() }
         y += 28 + pad
 
         setFrameSize(NSSize(width: ScheduleView.W, height: y))
@@ -1043,7 +1164,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     var lastTitleLogged = ""
     var lastTableMTime: Date?
 
-    enum ViewMode { case schedule, calendar }
+    enum ViewMode { case schedule, calendar, settings }
 
     var viewMode: ViewMode = .schedule
     var calMonth: Date = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
@@ -1178,6 +1299,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             for l in lessonsOn(date: d) {
                 print("  \(l.start)-\(l.end) \(l.klass) \(l.subject) weeks=\(l.weeks ?? "all")")
             }
+            exit(0)
+        }
+
+        if let i = CommandLine.arguments.firstIndex(of: "--semester"),
+           i + 1 < CommandLine.arguments.count {
+            // 用法：--semester 2026-08-31,22,odd
+            let parts = CommandLine.arguments[i + 1].split(separator: ",")
+            if parts.count >= 1, let d = parseDate(String(parts[0])) {
+                table.weekAnchor = dateKey(d)
+            }
+            if parts.count >= 2, let w = Int(parts[1]) { table.semesterWeeks = w }
+            if parts.count >= 3 { table.anchorIsOdd = (parts[2] == "odd") }
+            saveTimetable()
+            print("学期：\(dateKey(semesterStart)) 起 \(semesterWeeks) 周，到 \(dateKey(semesterEnd))，第1周=\(table.anchorIsOdd == true ? "单周" : "双周")")
+            exit(0)
+        }
+
+        if let i = CommandLine.arguments.firstIndex(of: "--shotsettings"),
+           i + 1 < CommandLine.arguments.count {
+            viewMode = .settings
+            let v = ScheduleView(owner: self)
+            dumpView(v, to: CommandLine.arguments[i + 1])
             exit(0)
         }
 
@@ -1634,6 +1777,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         guard inSemester(day) else { return }
         calSelected = day
         refreshPopover()
+    }
+
+    // MARK: 设置（学期）
+
+    @objc func openSettings() {
+        viewMode = .settings
+        refreshPopover()
+    }
+
+    func closeSettings() {
+        viewMode = .schedule
+        refreshPopover()
+    }
+
+    /// 保存课表配置（只改学期相关字段，不动 lessons）
+    func saveTimetable() {
+        let enc = JSONEncoder()
+        enc.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        if let data = try? enc.encode(table) { try? data.write(to: tableURL) }
+        loadTable()
+        tick()
+        refreshPopover()
+    }
+
+    func setSemesterStart(shiftWeeks: Int) {
+        let cal = Calendar.current
+        guard let d = cal.date(byAdding: .day, value: shiftWeeks * 7, to: semesterStart) else { return }
+        table.weekAnchor = dateKey(d)
+        saveTimetable()
+        log("学期开始改为 \(dateKey(d))")
+    }
+
+    func setSemesterWeeks(_ n: Int) {
+        table.semesterWeeks = max(1, min(30, n))
+        saveTimetable()
+        log("学期周数改为 \(table.semesterWeeks ?? 22)")
+    }
+
+    func setAnchorOdd(_ odd: Bool) {
+        table.anchorIsOdd = odd
+        saveTimetable()
+        log("第 1 周改为 \(odd ? "单周" : "双周")")
+    }
+
+    func resetSemesterDefaults() {
+        table.weekAnchor = "2026-08-31"
+        table.anchorIsOdd = true
+        table.semesterWeeks = 22
+        saveTimetable()
+        log("学期设置恢复默认")
     }
 
     func calToday() {
