@@ -775,7 +775,8 @@ final class ScheduleView: FlippedView {
                 label(c, "\(l.start)–\(l.end)",
                       .monospacedDigitSystemFont(ofSize: 12, weight: .medium), .labelColor,
                       NSRect(x: 26, y: ry + 9, width: 90, height: 17))
-                label(c, l.klass, .systemFont(ofSize: 12.5, weight: .semibold), Palette.accent,
+                label(c, l.klass, .systemFont(ofSize: 12.5, weight: .semibold),
+                      owner.isRegular(l) ? Palette.regular : Palette.accent,
                       NSRect(x: 120, y: ry + 9, width: 76, height: 17))
                 label(c, l.subject, .systemFont(ofSize: 11), .secondaryLabelColor,
                       NSRect(x: 198, y: ry + 10, width: 70, height: 17))
