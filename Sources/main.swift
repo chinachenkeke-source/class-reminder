@@ -120,6 +120,71 @@ enum Palette {
                                  NSColor(srgbRed: 0.30, green: 0.34, blue: 0.42, alpha: 0.9))
 }
 
+
+// MARK: - 农历 / 节气（万年历用）
+
+enum Lunar {
+    static let cal = Calendar(identifier: .chinese)
+    static let monthNames = ["正", "二", "三", "四", "五", "六", "七", "八", "九", "十", "冬", "腊"]
+    static let digits = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+
+    /// 农历日：初一…三十
+    static func dayName(_ d: Int) -> String {
+        switch d {
+        case 1...10: return "初" + digits[d]
+        case 11...19: return "十" + digits[d - 10]
+        case 20: return "二十"
+        case 21...29: return "廿" + digits[d - 20]
+        case 30: return "三十"
+        default: return ""
+        }
+    }
+
+    /// 格子里的第二行：节气 > 月初（月份）> 农历日
+    static func cellText(_ date: Date) -> String {
+        if let term = SolarTerm.name(on: date) { return term }
+        let c = cal.dateComponents([.month, .day], from: date)
+        guard let m = c.month, let d = c.day, (1...12).contains(m) else { return "" }
+        if d == 1 { return monthNames[m - 1] + "月" }
+        return dayName(d)
+    }
+}
+
+enum SolarTerm {
+    // 小寒、大寒、立春、雨水、惊蛰、春分、清明、谷雨、立夏、小满、芒种、夏至、
+    // 小暑、大暑、立秋、处暑、白露、秋分、寒露、霜降、立冬、小雪、大雪、冬至
+    static let names = ["小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨",
+                        "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑",
+                        "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至"]
+    static let info: [Int] = [0, 21208, 42467, 63836, 85337, 107014, 128867, 150921,
+                              173149, 195551, 218072, 240693, 263343, 285989, 308563,
+                              331033, 353350, 375494, 397447, 419210, 440795, 462224,
+                              483532, 504758]
+
+    /// 某个节气在当年的日期（经典 1900 基准算法，1900–2100 可用）
+    static func date(year: Int, index: Int) -> Date? {
+        let base = DateComponents(calendar: Calendar(identifier: .gregorian),
+                                  year: 1900, month: 1, day: 6, hour: 2, minute: 5).date!
+        let ms = 31556925974.7 * Double(year - 1900) + Double(info[index]) * 60000
+        return base.addingTimeInterval(ms / 1000)
+    }
+
+    /// 这一天是不是节气（覆盖前一年到后一年，避免时区/边界问题）
+    static func name(on day: Date) -> String? {
+        let cal = Calendar(identifier: .gregorian)
+        let y = cal.component(.year, from: day)
+        let md = (cal.component(.month, from: day), cal.component(.day, from: day))
+        for yy in [y] {
+            for (i, _) in names.enumerated() {
+                guard let d = date(year: yy, index: i) else { continue }
+                let m2 = (cal.component(.month, from: d), cal.component(.day, from: d))
+                if m2 == md { return names[i] }
+            }
+        }
+        return nil
+    }
+}
+
 // MARK: - 课表视图
 
 class FlippedView: NSView {
@@ -550,7 +615,7 @@ final class ScheduleView: FlippedView {
         let firstOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: owner.calMonth))!
         let daysInMonth = cal.range(of: .day, in: .month, for: firstOfMonth)!.count
         let lead = weekdayNumber(firstOfMonth) - 1
-        let cellH: CGFloat = 46
+        let cellH: CGFloat = 58
         let today = cal.startOfDay(for: now)
         let sel = cal.startOfDay(for: owner.calSelected)
         let gridTop = y
@@ -582,17 +647,27 @@ final class ScheduleView: FlippedView {
             }
             let numColor: NSColor = isSel ? .white
                 : (inTerm ? (isToday ? Palette.accent : .labelColor) : NSColor.tertiaryLabelColor)
-            label(cell, "\(dayNum)", .systemFont(ofSize: 14, weight: isSel || isToday ? .bold : .medium),
-                  numColor, NSRect(x: 0, y: 7, width: frame.width, height: 18), align: .center)
+            label(cell, "\(dayNum)", .systemFont(ofSize: 15, weight: isSel || isToday ? .bold : .medium),
+                  numColor, NSRect(x: 0, y: 5, width: frame.width, height: 18), align: .center)
 
+            // 第二行：节气 / 农历
+            let sub = Lunar.cellText(day)
+            if !sub.isEmpty {
+                let subColor: NSColor = isSel ? NSColor.white.withAlphaComponent(0.85)
+                    : (inTerm ? .tertiaryLabelColor : NSColor.tertiaryLabelColor.withAlphaComponent(0.6))
+                label(cell, sub, .systemFont(ofSize: 9.5, weight: .regular),
+                      subColor, NSRect(x: 0, y: 23, width: frame.width, height: 13), align: .center)
+            }
+
+            // 有课：底部小圆点（一节一个，最多 3 个）
             if inTerm && !items.isEmpty {
-                let dotColor: NSColor = isSel ? NSColor.white.withAlphaComponent(0.9) : Palette.accent
+                let dotColor: NSColor = isSel ? NSColor.white.withAlphaComponent(0.92) : Palette.accent
                 let n = min(items.count, 3)
-                let dotW: CGFloat = 4, gap: CGFloat = 3
+                let dotW: CGFloat = 4.5, gap: CGFloat = 3
                 let totalW = CGFloat(n) * dotW + CGFloat(n - 1) * gap
                 for d in 0..<n {
                     let dot = NSView(frame: NSRect(x: (frame.width - totalW) / 2 + CGFloat(d) * (dotW + gap),
-                                                   y: 30, width: dotW, height: dotW))
+                                                   y: frame.height - dotW - 7, width: dotW, height: dotW))
                     dot.wantsLayer = true
                     dot.layer?.cornerRadius = dotW / 2
                     dot.layer?.backgroundColor = dotColor.cgColor
