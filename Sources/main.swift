@@ -20,6 +20,7 @@ struct Timetable: Codable {
     var skipDates: [String]?
     var weekAnchor: String?
     var anchorIsOdd: Bool?
+    var semesterWeeks: Int?     // 一学期几周（默认 22）
     var lessons: [Lesson]
 }
 
@@ -210,6 +211,13 @@ final class ScheduleView: FlippedView {
     // MARK: 构建
 
     private func build() {
+        switch owner?.viewMode ?? .schedule {
+        case .calendar: buildCalendar()
+        case .schedule: buildSchedule()
+        }
+    }
+
+    private func buildSchedule() {
         guard let owner = owner else { return }
         let now = Date()
         let cal = Calendar.current
@@ -222,12 +230,22 @@ final class ScheduleView: FlippedView {
               NSRect(x: pad, y: y - 4, width: 80, height: 26))
         label(self, monthDay(now), .systemFont(ofSize: 13, weight: .medium),
               .secondaryLabelColor, NSRect(x: pad + 62, y: y + 2, width: 90, height: 20))
+        // 右上角：日历入口
+        let goCal = Chip(frame: NSRect(x: ScheduleView.W - pad - 58, y: y - 2, width: 58, height: 22))
+        goCal.wantsLayer = true
+        goCal.layer?.cornerRadius = 8
+        goCal.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.12).cgColor
+        label(goCal, "日历 ›", .systemFont(ofSize: 11.5, weight: .semibold), .secondaryLabelColor,
+              NSRect(x: 0, y: 3, width: 58, height: 16), align: .center)
+        goCal.onTap = { [weak owner] in owner?.openCalendar() }
+        addSubview(goCal)
+
         let isOdd = owner.isOddWeek(now)
         let pillW = pill(self, "第\(owner.weekIndex(now))周 · \(isOdd ? "单周" : "双周")",
                          isOdd ? Palette.accent : Palette.amber, .white,
-                         rect: NSRect(x: 0, y: y + 1, width: 0, height: 20))
+                         rect: NSRect(x: 0, y: y + 26, width: 0, height: 20))
         pillW.frame.origin.x = ScheduleView.W - pad - pillW.frame.width
-        y += 34
+        y += 60
 
         // ── 下一节大卡
         let cardH: CGFloat = 108
@@ -353,6 +371,190 @@ final class ScheduleView: FlippedView {
             footerButton(it.0, x: pad + (bw + gap) * CGFloat(i), y: y, w: bw, action: it.1)
         }
         y += 20 + pad
+
+        setFrameSize(NSSize(width: ScheduleView.W, height: y))
+    }
+
+    // MARK: 日历
+
+    private func monthTitle(_ d: Date) -> String {
+        let c = Calendar.current.dateComponents([.year, .month], from: d)
+        return "\(c.year!)年\(c.month!)月"
+    }
+
+    private func buildCalendar() {
+        guard let owner = owner else { return }
+        let cal = Calendar.current
+        let now = Date()
+        var y: CGFloat = 12
+
+        func navChip(_ rect: NSRect, _ text: String, _ font: NSFont,
+                     enabled: Bool = true, fill: NSColor? = nil, fg: NSColor = .secondaryLabelColor,
+                     _ action: @escaping () -> Void) {
+            let chip = Chip(frame: rect)
+            chip.wantsLayer = true
+            chip.layer?.cornerRadius = 8
+            chip.layer?.backgroundColor = (fill ?? NSColor.secondaryLabelColor.withAlphaComponent(0.12)).cgColor
+            label(chip, text, font, enabled ? fg : NSColor.tertiaryLabelColor,
+                  NSRect(x: 0, y: (rect.height - 16) / 2, width: rect.width, height: 16), align: .center)
+            if enabled { chip.onTap = action }
+            addSubview(chip)
+        }
+
+        // ── 顶部：‹ 2026年11月 ›     今天
+        let startMonth = cal.date(from: cal.dateComponents([.year, .month], from: owner.semesterStart))!
+        let endMonth = cal.date(from: cal.dateComponents([.year, .month], from: owner.semesterEnd))!
+        let canPrev = owner.calMonth > startMonth
+        let canNext = owner.calMonth < endMonth
+        navChip(NSRect(x: pad, y: y, width: 30, height: 26), "‹",
+                .systemFont(ofSize: 15, weight: .semibold), enabled: canPrev) { [weak owner] in owner?.calShift(-1) }
+        navChip(NSRect(x: pad + 34, y: y, width: 30, height: 26), "›",
+                .systemFont(ofSize: 15, weight: .semibold), enabled: canNext) { [weak owner] in owner?.calShift(1) }
+
+        label(self, monthTitle(owner.calMonth), .systemFont(ofSize: 17, weight: .bold), .labelColor,
+              NSRect(x: pad + 74, y: y + 2, width: 170, height: 22))
+        navChip(NSRect(x: ScheduleView.W - pad - 52, y: y, width: 52, height: 26), "今天",
+                .systemFont(ofSize: 12, weight: .semibold)) { [weak owner] in owner?.calToday() }
+        y += 36
+
+        // ── 星期表头
+        let gridW = ScheduleView.W - pad * 2
+        let colW = gridW / 7
+        let names = ["一", "二", "三", "四", "五", "六", "日"]
+        for (i, n) in names.enumerated() {
+            label(self, n, .systemFont(ofSize: 11.5, weight: .medium), .tertiaryLabelColor,
+                  NSRect(x: pad + CGFloat(i) * colW, y: y, width: colW, height: 16), align: .center)
+        }
+        y += 22
+
+        // ── 日期网格
+        let firstOfMonth = cal.date(from: cal.dateComponents([.year, .month], from: owner.calMonth))!
+        let daysInMonth = cal.range(of: .day, in: .month, for: firstOfMonth)!.count
+        let lead = weekdayNumber(firstOfMonth) - 1
+        let cellH: CGFloat = 46
+        let today = cal.startOfDay(for: now)
+        let sel = cal.startOfDay(for: owner.calSelected)
+        let gridTop = y
+
+        for idx in 0..<42 {
+            let dayNum = idx - lead + 1
+            let r = idx / 7, c = idx % 7
+            let frame = NSRect(x: pad + CGFloat(c) * colW, y: gridTop + CGFloat(r) * cellH,
+                               width: colW - 2, height: cellH - 4)
+            guard dayNum >= 1, dayNum <= daysInMonth else { continue }
+            guard let date = cal.date(byAdding: .day, value: dayNum - 1, to: firstOfMonth) else { continue }
+            let day = cal.startOfDay(for: date)
+            let inTerm = owner.inSemester(day)
+            let isSel = day == sel
+            let isToday = day == today
+            let items = owner.lessonsOn(date: day)
+
+            let cell = Chip(frame: frame)
+            cell.wantsLayer = true
+            cell.layer?.cornerRadius = 9
+            if isSel && inTerm {
+                cell.layer?.backgroundColor = Palette.accent.cgColor
+            } else if isToday {
+                cell.layer?.backgroundColor = Palette.accent.withAlphaComponent(0.08).cgColor
+                cell.layer?.borderWidth = 1.5
+                cell.layer?.borderColor = Palette.accent.withAlphaComponent(0.5).cgColor
+            } else if inTerm {
+                cell.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.05).cgColor
+            }
+            let numColor: NSColor = isSel ? .white
+                : (inTerm ? (isToday ? Palette.accent : .labelColor) : NSColor.tertiaryLabelColor)
+            label(cell, "\(dayNum)", .systemFont(ofSize: 14, weight: isSel || isToday ? .bold : .medium),
+                  numColor, NSRect(x: 0, y: 7, width: frame.width, height: 18), align: .center)
+
+            if inTerm && !items.isEmpty {
+                let dotColor: NSColor = isSel ? NSColor.white.withAlphaComponent(0.9) : Palette.accent
+                let n = min(items.count, 3)
+                let dotW: CGFloat = 4, gap: CGFloat = 3
+                let totalW = CGFloat(n) * dotW + CGFloat(n - 1) * gap
+                for d in 0..<n {
+                    let dot = NSView(frame: NSRect(x: (frame.width - totalW) / 2 + CGFloat(d) * (dotW + gap),
+                                                   y: 30, width: dotW, height: dotW))
+                    dot.wantsLayer = true
+                    dot.layer?.cornerRadius = dotW / 2
+                    dot.layer?.backgroundColor = dotColor.cgColor
+                    cell.addSubview(dot)
+                }
+            }
+
+            if inTerm {
+                cell.onTap = { [weak owner] in owner?.calSelect(day) }
+            }
+            addSubview(cell)
+        }
+        y = gridTop + 6 * cellH + 6
+
+        // ── 选中那天
+        let hair = NSView(frame: NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 1))
+        hair.wantsLayer = true
+        hair.layer?.backgroundColor = NSColor.separatorColor.withAlphaComponent(0.6).cgColor
+        addSubview(hair)
+        y += 10
+
+        let inTerm = owner.inSemester(sel)
+        let head = "\(monthDay(sel)) \(weekdayNames[weekdayNumber(sel)])"
+        let sub = inTerm ? owner.weekLabel(sel) : "不在本学期"
+        label(self, head, .systemFont(ofSize: 15, weight: .bold), .labelColor,
+              NSRect(x: pad, y: y, width: 170, height: 20))
+        label(self, sub, .systemFont(ofSize: 11.5, weight: .medium),
+              inTerm ? .tertiaryLabelColor : .tertiaryLabelColor,
+              NSRect(x: pad + 118, y: y + 3, width: 130, height: 16))
+        y += 26
+
+        let items = owner.lessonsOn(date: sel)
+        if !inTerm {
+            let c = card(NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 48),
+                         Palette.todayCard, radius: 12, border: Palette.todayBorder)
+            label(c, "这一天不在 2026-08-31 ~ 2027-01-31 学期内", .systemFont(ofSize: 12),
+                  .secondaryLabelColor, NSRect(x: 14, y: 15, width: c.frame.width - 28, height: 18))
+            y += 48
+        } else if items.isEmpty {
+            let c = card(NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 48),
+                         Palette.todayCard, radius: 12, border: Palette.todayBorder)
+            label(c, "这天没课 🎉", .systemFont(ofSize: 13, weight: .medium),
+                  .secondaryLabelColor, NSRect(x: 14, y: 14, width: c.frame.width - 28, height: 18))
+            y += 48
+        } else {
+            let rowH: CGFloat = 34
+            let h = CGFloat(items.count) * rowH + 10
+            let c = card(NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: h),
+                         Palette.todayCard, radius: 12, border: Palette.todayBorder)
+            let bar = NSView(frame: NSRect(x: 0, y: 0, width: 4, height: h))
+            bar.wantsLayer = true
+            bar.layer?.backgroundColor = Palette.accent.withAlphaComponent(0.85).cgColor
+            c.addSubview(bar)
+
+            for (i, l) in items.enumerated() {
+                let ry = 5 + CGFloat(i) * rowH
+                if i > 0 {
+                    let sep = NSView(frame: NSRect(x: 18, y: ry - 2, width: c.frame.width - 36, height: 1))
+                    sep.wantsLayer = true
+                    sep.layer?.backgroundColor = Palette.todayBorder.withAlphaComponent(0.5).cgColor
+                    c.addSubview(sep)
+                }
+                label(c, "\(l.start)–\(l.end)",
+                      .monospacedDigitSystemFont(ofSize: 12, weight: .medium), .labelColor,
+                      NSRect(x: 18, y: ry + 9, width: 96, height: 17))
+                label(c, l.klass, .systemFont(ofSize: 12.5, weight: .semibold), Palette.accent,
+                      NSRect(x: 116, y: ry + 9, width: 76, height: 17))
+                label(c, l.subject, .systemFont(ofSize: 11), .secondaryLabelColor,
+                      NSRect(x: 194, y: ry + 10, width: 70, height: 17))
+                if l.period > 0 {
+                    label(c, "第\(l.period)节", .systemFont(ofSize: 10.5), .tertiaryLabelColor,
+                          NSRect(x: c.frame.width - 66, y: ry + 10, width: 52, height: 16), align: .right)
+                }
+            }
+            y += h
+        }
+
+        y += 12
+        navChip(NSRect(x: pad, y: y, width: 104, height: 28), "‹ 回到课表",
+                .systemFont(ofSize: 12, weight: .semibold)) { [weak owner] in owner?.closeCalendar() }
+        y += 28 + pad
 
         setFrameSize(NSSize(width: ScheduleView.W, height: y))
     }
@@ -841,6 +1043,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     var lastTitleLogged = ""
     var lastTableMTime: Date?
 
+    enum ViewMode { case schedule, calendar }
+
+    var viewMode: ViewMode = .schedule
+    var calMonth: Date = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
+    var calSelected: Date = Calendar.current.startOfDay(for: Date())
+
     let firedKey = "firedReminders"
     let offsetKey = "weekOffset"
     let leadKey = "leadMinutes"
@@ -960,6 +1168,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
                                  sub: "12:05 下课",
                                  detail: "第5节", tone: .start)
             dumpView(root, to: CommandLine.arguments[i + 1])
+            exit(0)
+        }
+
+        if let i = CommandLine.arguments.firstIndex(of: "--shotcal"),
+           i + 1 < CommandLine.arguments.count {
+            viewMode = .calendar
+            if CommandLine.arguments.count > i + 2 {
+                let arg = CommandLine.arguments[i + 2]      // 形如 2026-11
+                let parts = arg.split(separator: "-")
+                if parts.count == 2, let y = Int(parts[0]), let m = Int(parts[1]) {
+                    calMonth = Calendar.current.date(from: DateComponents(year: y, month: m))!
+                    calSelected = calMonth
+                }
+            }
+            let v = ScheduleView(owner: self)
+            dumpView(v, to: CommandLine.arguments[i + 1])
             exit(0)
         }
 
@@ -1346,6 +1570,70 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     }
 
     // MARK: 单双周
+
+    // MARK: 学期范围
+
+    var semesterWeeks: Int { table.semesterWeeks ?? 22 }
+
+    var semesterStart: Date {
+        let cal = Calendar.current
+        let d = parseDate(table.weekAnchor ?? "2026-08-31") ?? Date()
+        return cal.startOfDay(for: d)
+    }
+
+    var semesterEnd: Date {
+        Calendar.current.date(byAdding: .day, value: semesterWeeks * 7 - 1, to: semesterStart) ?? semesterStart
+    }
+
+    func inSemester(_ d: Date) -> Bool {
+        let day = Calendar.current.startOfDay(for: d)
+        return day >= semesterStart && day <= semesterEnd
+    }
+
+    /// 某天要上的课（放假返回空）
+    func lessonsOn(date d: Date) -> [Lesson] {
+        isSkipped(d) ? [] : lessons(on: d)
+    }
+
+    // MARK: 日历操作
+
+    func openCalendar() {
+        viewMode = .calendar
+        calMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: calSelected))!
+        refreshPopover()
+    }
+
+    func closeCalendar() {
+        viewMode = .schedule
+        refreshPopover()
+    }
+
+    func calShift(_ months: Int) {
+        let cal = Calendar.current
+        guard let m = cal.date(byAdding: .month, value: months, to: calMonth) else { return }
+        // 限制在学期月份范围内
+        let startMonth = cal.date(from: cal.dateComponents([.year, .month], from: semesterStart))!
+        let endMonth = cal.date(from: cal.dateComponents([.year, .month], from: semesterEnd))!
+        if m < startMonth || m > endMonth { return }
+        calMonth = m
+        refreshPopover()
+    }
+
+    func calSelect(_ d: Date) {
+        let day = Calendar.current.startOfDay(for: d)
+        guard inSemester(day) else { return }
+        calSelected = day
+        refreshPopover()
+    }
+
+    func calToday() {
+        let today = Calendar.current.startOfDay(for: Date())
+        if inSemester(today) {
+            calSelected = today
+            calMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: today))!
+        }
+        refreshPopover()
+    }
 
     func weekIndex(_ d: Date) -> Int {
         let cal = Calendar.current

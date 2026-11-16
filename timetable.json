@@ -4,6 +4,7 @@
   "skipDates": [],
   "weekAnchor": "2026-08-31",
   "anchorIsOdd": true,
+  "semesterWeeks": 22,
   "lessons": [
     {
       "end": "10:05",
