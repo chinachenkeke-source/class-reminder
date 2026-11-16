@@ -606,7 +606,9 @@ final class ScheduleView: FlippedView {
         let colW = gridW / 7
         let names = ["一", "二", "三", "四", "五", "六", "日"]
         for (i, n) in names.enumerated() {
-            label(self, n, .systemFont(ofSize: 11.5, weight: .medium), .tertiaryLabelColor,
+            let weekend = i >= 5   // 六、日
+            label(self, n, .systemFont(ofSize: 11.5, weight: weekend ? .semibold : .medium),
+                  weekend ? Palette.amber : .tertiaryLabelColor,
                   NSRect(x: pad + CGFloat(i) * colW, y: y, width: colW, height: 16), align: .center)
         }
         y += 22
@@ -644,7 +646,13 @@ final class ScheduleView: FlippedView {
                 cell.layer?.borderWidth = 1.5
                 cell.layer?.borderColor = Palette.accent.withAlphaComponent(0.5).cgColor
             } else if inTerm {
-                cell.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.05).cgColor
+                let weekend = c >= 5
+                cell.layer?.backgroundColor = weekend
+                    ? Palette.amber.withAlphaComponent(0.10).cgColor
+                    : NSColor.secondaryLabelColor.withAlphaComponent(0.05).cgColor
+            } else if c >= 5 {
+                // 学期外的周末：也给一点淡淡的暖色，保持规律
+                cell.layer?.backgroundColor = Palette.amber.withAlphaComponent(0.05).cgColor
             }
             let numColor: NSColor = isSel ? .white
                 : (isToday ? Palette.accent : (inTerm ? .labelColor : .secondaryLabelColor))
