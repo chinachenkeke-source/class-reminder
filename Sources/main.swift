@@ -586,10 +586,9 @@ final class ScheduleView: FlippedView {
         }
 
         // ── 顶部：‹ 2026年11月 ›     今天
-        let startMonth = cal.date(from: cal.dateComponents([.year, .month], from: owner.semesterStart))!
-        let endMonth = cal.date(from: cal.dateComponents([.year, .month], from: owner.semesterEnd))!
-        let canPrev = owner.calMonth > startMonth
-        let canNext = owner.calMonth < endMonth
+        let calYear = cal.component(.year, from: owner.calMonth)
+        let canPrev = calYear > 1900
+        let canNext = calYear < 2100
         navChip(NSRect(x: pad, y: y, width: 30, height: 26), "‹",
                 .systemFont(ofSize: 15, weight: .semibold), enabled: canPrev) { [weak owner] in owner?.calShift(-1) }
         navChip(NSRect(x: pad + 34, y: y, width: 30, height: 26), "›",
@@ -616,11 +615,12 @@ final class ScheduleView: FlippedView {
         let daysInMonth = cal.range(of: .day, in: .month, for: firstOfMonth)!.count
         let lead = weekdayNumber(firstOfMonth) - 1
         let cellH: CGFloat = 58
+        let rowCount = (lead + daysInMonth + 6) / 7
         let today = cal.startOfDay(for: now)
         let sel = cal.startOfDay(for: owner.calSelected)
         let gridTop = y
 
-        for idx in 0..<42 {
+        for idx in 0..<(rowCount * 7) {
             let dayNum = idx - lead + 1
             let r = idx / 7, c = idx % 7
             let frame = NSRect(x: pad + CGFloat(c) * colW, y: gridTop + CGFloat(r) * cellH,
@@ -636,7 +636,7 @@ final class ScheduleView: FlippedView {
             let cell = Chip(frame: frame)
             cell.wantsLayer = true
             cell.layer?.cornerRadius = 9
-            if isSel && inTerm {
+            if isSel {
                 cell.layer?.backgroundColor = Palette.accent.cgColor
             } else if isToday {
                 cell.layer?.backgroundColor = Palette.accent.withAlphaComponent(0.08).cgColor
@@ -646,7 +646,7 @@ final class ScheduleView: FlippedView {
                 cell.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.05).cgColor
             }
             let numColor: NSColor = isSel ? .white
-                : (inTerm ? (isToday ? Palette.accent : .labelColor) : NSColor.tertiaryLabelColor)
+                : (isToday ? Palette.accent : (inTerm ? .labelColor : .secondaryLabelColor))
             label(cell, "\(dayNum)", .systemFont(ofSize: 15, weight: isSel || isToday ? .bold : .medium),
                   numColor, NSRect(x: 0, y: 5, width: frame.width, height: 18), align: .center)
 
@@ -654,7 +654,7 @@ final class ScheduleView: FlippedView {
             let sub = Lunar.cellText(day)
             if !sub.isEmpty {
                 let subColor: NSColor = isSel ? NSColor.white.withAlphaComponent(0.85)
-                    : (inTerm ? .tertiaryLabelColor : NSColor.tertiaryLabelColor.withAlphaComponent(0.6))
+                    : (inTerm ? .tertiaryLabelColor : NSColor.tertiaryLabelColor.withAlphaComponent(0.55))
                 label(cell, sub, .systemFont(ofSize: 9.5, weight: .regular),
                       subColor, NSRect(x: 0, y: 23, width: frame.width, height: 13), align: .center)
             }
@@ -675,12 +675,10 @@ final class ScheduleView: FlippedView {
                 }
             }
 
-            if inTerm {
-                cell.onTap = { [weak owner] in owner?.calSelect(day) }
-            }
+            cell.onTap = { [weak owner] in owner?.calSelect(day) }
             addSubview(cell)
         }
-        y = gridTop + 6 * cellH + 6
+        y = gridTop + CGFloat(rowCount) * cellH + 6
 
         // ── 选中那天
         let hair = NSView(frame: NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 1))
@@ -1839,18 +1837,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     func calShift(_ months: Int) {
         let cal = Calendar.current
         guard let m = cal.date(byAdding: .month, value: months, to: calMonth) else { return }
-        // 限制在学期月份范围内
-        let startMonth = cal.date(from: cal.dateComponents([.year, .month], from: semesterStart))!
-        let endMonth = cal.date(from: cal.dateComponents([.year, .month], from: semesterEnd))!
-        if m < startMonth || m > endMonth { return }
+        // 万年历：1900–2100 随便翻
+        let y = cal.component(.year, from: m)
+        if y < 1900 || y > 2100 { return }
         calMonth = m
         refreshPopover()
     }
 
     func calSelect(_ d: Date) {
-        let day = Calendar.current.startOfDay(for: d)
-        guard inSemester(day) else { return }
-        calSelected = day
+        calSelected = Calendar.current.startOfDay(for: d)
         refreshPopover()
     }
 
