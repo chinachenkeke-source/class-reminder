@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.9.0-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.10.0-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -40,7 +40,8 @@
 - ⏰ **提前提醒**：5 / 10 / 15 / 20 / 30 分钟，点一下即生效
 - 🔔 **两次提醒**：提前 N 分钟蓝色卡片 + 语音；到点换琥珀色卡片再响三声，不语音
 - 🔊 **叫得住人**：大卡片置顶 + 连响三次 + 中文女声播报两遍
-- 📅 **万年历**：1900–2100 任意年月都能翻，每格带农历 / 节气；学期内的日子标出当天课量，点进去看细节
+- 📅 **万年历**：1900–2100 任意年月都能翻，每格带农历 / 节气；学期内标出当天课量
+- 🔴 **课型配色**：正课（历史、科学）红点，早读 / 晚读 / 晚自习 / 培优蓝点
 - ⚙️ **学期设置**：学期开始日、周数、第 1 周是单周还是双周，面板里直接改，立刻生效
 - 🗓 **单双周**：按「第 1 周是哪天、那天算单周还是双周」自动推算，可手动切换
 - 🎨 **今天 / 明天分色**：蓝灰对琥珀，不会看混
@@ -49,7 +50,7 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.9.0.dmg`
+1. 到 Releases 下载 `ClassReminder-1.10.0.dmg`
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
@@ -181,6 +182,7 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
 
+- **v1.10.0**（2026-11-16）：日历按课型分色（正课红、早读晚读晚自习培优蓝）
 - **v1.9.0**（2026-11-16）：日历可翻任意年份（1900–2100），不再限制在学期内
 - **v1.8.0**（2026-11-16）：日历加农历与节气（万年历）
 - **v1.7.0**（2026-11-16）：新增学期设置（开始日 / 周数 / 第 1 周单双），日历跟着走

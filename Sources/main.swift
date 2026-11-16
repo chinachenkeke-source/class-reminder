@@ -109,6 +109,7 @@ enum Palette {
     static let accent2 = NSColor(srgbRed: 0.35, green: 0.58, blue: 1.00, alpha: 1)
     static let amber = NSColor(srgbRed: 0.90, green: 0.55, blue: 0.05, alpha: 1)
     static let amber2 = NSColor(srgbRed: 0.98, green: 0.68, blue: 0.14, alpha: 1)
+    static let regular = NSColor(srgbRed: 0.90, green: 0.28, blue: 0.30, alpha: 1)   // 正课（历史/科学）
 
     static let todayCard = dyn(NSColor(srgbRed: 0.953, green: 0.965, blue: 0.984, alpha: 1),
                                NSColor(srgbRed: 0.145, green: 0.157, blue: 0.180, alpha: 1))
@@ -659,18 +660,24 @@ final class ScheduleView: FlippedView {
                       subColor, NSRect(x: 0, y: 23, width: frame.width, height: 13), align: .center)
             }
 
-            // 有课：底部小圆点（一节一个，最多 3 个）
+            // 有课：底部小圆点（一节一个，最多 3 个；正课红、其余蓝）
             if inTerm && !items.isEmpty {
-                let dotColor: NSColor = isSel ? NSColor.white.withAlphaComponent(0.92) : Palette.accent
                 let n = min(items.count, 3)
                 let dotW: CGFloat = 4.5, gap: CGFloat = 3
                 let totalW = CGFloat(n) * dotW + CGFloat(n - 1) * gap
                 for d in 0..<n {
+                    let lesson = items[d]
+                    let base = owner.isRegular(lesson) ? Palette.regular : Palette.accent
+                    let color: NSColor = base
                     let dot = NSView(frame: NSRect(x: (frame.width - totalW) / 2 + CGFloat(d) * (dotW + gap),
                                                    y: frame.height - dotW - 7, width: dotW, height: dotW))
                     dot.wantsLayer = true
                     dot.layer?.cornerRadius = dotW / 2
-                    dot.layer?.backgroundColor = dotColor.cgColor
+                    dot.layer?.backgroundColor = color.cgColor
+                    if isSel {          // 选中格是蓝底，给色点加白描边才看得出红蓝
+                        dot.layer?.borderWidth = 1
+                        dot.layer?.borderColor = NSColor.white.withAlphaComponent(0.9).cgColor
+                    }
                     cell.addSubview(dot)
                 }
             }
@@ -678,7 +685,23 @@ final class ScheduleView: FlippedView {
             cell.onTap = { [weak owner] in owner?.calSelect(day) }
             addSubview(cell)
         }
-        y = gridTop + CGFloat(rowCount) * cellH + 6
+        y = gridTop + CGFloat(rowCount) * cellH + 4
+
+        // ── 图例
+        func legend(_ x: CGFloat, _ color: NSColor, _ text: String) {
+            let dot = NSView(frame: NSRect(x: x, y: y + 4, width: 5, height: 5))
+            dot.wantsLayer = true
+            dot.layer?.cornerRadius = 2.5
+            dot.layer?.backgroundColor = color.cgColor
+            addSubview(dot)
+            let w = (text as NSString).size(withAttributes: [.font: NSFont.systemFont(ofSize: 10)]).width
+            label(self, text, .systemFont(ofSize: 10), .tertiaryLabelColor,
+                  NSRect(x: x + 9, y: y, width: w + 6, height: 14))
+            _ = w
+        }
+        legend(pad, Palette.regular, "正课")
+        legend(pad + 60, Palette.accent, "早读 / 晚读 / 晚自习 / 培优")
+        y += 14
 
         // ── 选中那天
         let hair = NSView(frame: NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 1))
@@ -728,13 +751,19 @@ final class ScheduleView: FlippedView {
                     sep.layer?.backgroundColor = Palette.todayBorder.withAlphaComponent(0.5).cgColor
                     c.addSubview(sep)
                 }
+                let marker = NSView(frame: NSRect(x: 14, y: ry + 13, width: 6, height: 6))
+                marker.wantsLayer = true
+                marker.layer?.cornerRadius = 3
+                marker.layer?.backgroundColor = (owner.isRegular(l) ? Palette.regular : Palette.accent).cgColor
+                c.addSubview(marker)
+
                 label(c, "\(l.start)–\(l.end)",
                       .monospacedDigitSystemFont(ofSize: 12, weight: .medium), .labelColor,
-                      NSRect(x: 18, y: ry + 9, width: 96, height: 17))
+                      NSRect(x: 26, y: ry + 9, width: 90, height: 17))
                 label(c, l.klass, .systemFont(ofSize: 12.5, weight: .semibold), Palette.accent,
-                      NSRect(x: 116, y: ry + 9, width: 76, height: 17))
+                      NSRect(x: 120, y: ry + 9, width: 76, height: 17))
                 label(c, l.subject, .systemFont(ofSize: 11), .secondaryLabelColor,
-                      NSRect(x: 194, y: ry + 10, width: 70, height: 17))
+                      NSRect(x: 198, y: ry + 10, width: 70, height: 17))
                 if l.period > 0 {
                     label(c, "第\(l.period)节", .systemFont(ofSize: 10.5), .tertiaryLabelColor,
                           NSRect(x: c.frame.width - 66, y: ry + 10, width: 52, height: 16), align: .right)
@@ -1401,11 +1430,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
            i + 1 < CommandLine.arguments.count {
             viewMode = .calendar
             if CommandLine.arguments.count > i + 2 {
-                let arg = CommandLine.arguments[i + 2]      // 形如 2026-11
+                let arg = CommandLine.arguments[i + 2]      // 2026-11 或 2026-11-17
                 let parts = arg.split(separator: "-")
-                if parts.count == 2, let y = Int(parts[0]), let m = Int(parts[1]) {
+                if parts.count >= 2, let y = Int(parts[0]), let m = Int(parts[1]) {
                     calMonth = Calendar.current.date(from: DateComponents(year: y, month: m))!
                     calSelected = calMonth
+                    if parts.count == 3, let d = Int(parts[2]) {
+                        calSelected = Calendar.current.date(from: DateComponents(year: y, month: m, day: d))!
+                    }
                 }
             }
             let v = ScheduleView(owner: self)
@@ -1814,6 +1846,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     func inSemester(_ d: Date) -> Bool {
         let day = Calendar.current.startOfDay(for: d)
         return day >= semesterStart && day <= semesterEnd
+    }
+
+    /// 正课（历史、科学这种）：红点；早读/晚读/晚自习/培优算蓝色
+    func isRegular(_ l: Lesson) -> Bool {
+        if l.period == 0 { return false }
+        if l.subject.contains("培优") || l.subject.contains("晚自习") { return false }
+        if l.subject.contains("早读") || l.subject.contains("晚读") { return false }
+        return true
     }
 
     /// 某天要上的课（放假返回空）
