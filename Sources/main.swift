@@ -33,6 +33,11 @@ let tableURL = supportDir.appendingPathComponent("timetable.json")
 let logURL = fm.homeDirectoryForCurrentUser
     .appendingPathComponent("Library/Logs/ClassReminder.log")
 
+// MARK: 在线神经网络语音（edge-tts）；断网或缺失时回退系统 say
+let ttsVoiceName = "zh-CN-XiaoxiaoNeural"   // 晓晓：温暖女声
+let ttsRate = "-5%"                          // 略放慢，听感更自然
+let ttsPythonURL = supportDir.appendingPathComponent("tts-venv/bin/python")
+
 func log(_ s: String) {
     let df = DateFormatter()
     df.dateFormat = "MM-dd HH:mm:ss"
@@ -105,20 +110,21 @@ func dyn(_ light: NSColor, _ dark: NSColor) -> NSColor {
 }
 
 enum Palette {
-    static let accent = NSColor(srgbRed: 0.16, green: 0.42, blue: 0.94, alpha: 1)
-    static let accent2 = NSColor(srgbRed: 0.35, green: 0.58, blue: 1.00, alpha: 1)
-    static let amber = NSColor(srgbRed: 0.90, green: 0.55, blue: 0.05, alpha: 1)
-    static let amber2 = NSColor(srgbRed: 0.98, green: 0.68, blue: 0.14, alpha: 1)
+    static let accent = NSColor(srgbRed: 0.31, green: 0.42, blue: 0.86, alpha: 1)
+    static let accent2 = NSColor(srgbRed: 0.43, green: 0.60, blue: 0.94, alpha: 1)
+    static let amber = NSColor(srgbRed: 0.20, green: 0.57, blue: 0.61, alpha: 1)
+    static let amber2 = NSColor(srgbRed: 0.38, green: 0.72, blue: 0.72, alpha: 1)
+    static let todayAccent = NSColor(srgbRed: 0.76, green: 0.42, blue: 0.22, alpha: 1)
     static let regular = NSColor(srgbRed: 0.90, green: 0.28, blue: 0.30, alpha: 1)   // 正课（历史/科学）
 
-    static let todayCard = dyn(NSColor(srgbRed: 0.953, green: 0.965, blue: 0.984, alpha: 1),
-                               NSColor(srgbRed: 0.145, green: 0.157, blue: 0.180, alpha: 1))
-    static let tomorrowCard = dyn(NSColor(srgbRed: 1.000, green: 0.960, blue: 0.890, alpha: 1),
-                                  NSColor(srgbRed: 0.220, green: 0.176, blue: 0.110, alpha: 1))
-    static let tomorrowBorder = dyn(NSColor(srgbRed: 0.95, green: 0.72, blue: 0.30, alpha: 0.55),
-                                    NSColor(srgbRed: 0.95, green: 0.72, blue: 0.30, alpha: 0.45))
-    static let todayBorder = dyn(NSColor(srgbRed: 0.78, green: 0.83, blue: 0.92, alpha: 0.75),
-                                 NSColor(srgbRed: 0.30, green: 0.34, blue: 0.42, alpha: 0.9))
+    static let todayCard = dyn(NSColor(srgbRed: 1.00, green: 0.86, blue: 0.72, alpha: 0.83),
+                               NSColor(srgbRed: 0.38, green: 0.25, blue: 0.19, alpha: 0.82))
+    static let tomorrowCard = dyn(NSColor(srgbRed: 0.77, green: 0.96, blue: 0.91, alpha: 0.72),
+                                  NSColor(srgbRed: 0.13, green: 0.33, blue: 0.32, alpha: 0.82))
+    static let todayBorder = dyn(NSColor(srgbRed: 1.00, green: 0.95, blue: 0.85, alpha: 0.95),
+                                 NSColor(srgbRed: 0.90, green: 0.60, blue: 0.40, alpha: 0.38))
+    static let tomorrowBorder = dyn(NSColor(srgbRed: 0.94, green: 1.00, blue: 0.98, alpha: 0.9),
+                                    NSColor(srgbRed: 0.47, green: 0.83, blue: 0.77, alpha: 0.38))
 }
 
 
@@ -200,16 +206,50 @@ final class Chip: FlippedView {
 
 final class ScheduleView: FlippedView {
 
-    static let W: CGFloat = 384
-    let pad: CGFloat = 16
+    static let W: CGFloat = 400
+    let pad: CGFloat = 20
     weak var owner: AppDelegate?
 
     init(owner: AppDelegate) {
         self.owner = owner
         super.init(frame: NSRect(x: 0, y: 0, width: ScheduleView.W, height: 600))
         wantsLayer = true
-        layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        let background = CAGradientLayer()
+        background.colors = [
+            dyn(NSColor(srgbRed: 0.94, green: 0.94, blue: 0.99, alpha: 1),
+                NSColor(srgbRed: 0.11, green: 0.13, blue: 0.20, alpha: 1)).cgColor,
+            dyn(NSColor(srgbRed: 0.90, green: 0.95, blue: 0.98, alpha: 1),
+                NSColor(srgbRed: 0.10, green: 0.18, blue: 0.23, alpha: 1)).cgColor
+        ]
+        background.startPoint = CGPoint(x: 0, y: 0)
+        background.endPoint = CGPoint(x: 1, y: 1)
+        background.frame = bounds
+        background.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+        layer?.addSublayer(background)
+
+        let blur = NSVisualEffectView(frame: bounds)
+        blur.material = .popover
+        blur.blendingMode = .withinWindow
+        blur.state = .active
+        blur.alphaValue = 0.12
+        blur.autoresizingMask = [.width, .height]
+        addSubview(blur)
         build()
+        // 柔和的色光透过半透明卡片，形成玻璃层次。
+        for (frame, color) in [
+            (NSRect(x: -110, y: bounds.height - 365, width: 350, height: 350),
+             NSColor(srgbRed: 0.61, green: 0.59, blue: 0.99, alpha: 0.30)),
+            (NSRect(x: 175, y: 120, width: 340, height: 340),
+             NSColor(srgbRed: 0.46, green: 0.83, blue: 0.84, alpha: 0.28))
+        ] {
+            let glow = CAGradientLayer()
+            glow.type = .radial
+            glow.colors = [color.cgColor, color.withAlphaComponent(0).cgColor]
+            glow.startPoint = CGPoint(x: 0.5, y: 0.5)
+            glow.endPoint = CGPoint(x: 1, y: 1)
+            glow.frame = frame
+            layer?.insertSublayer(glow, above: background)
+        }
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -238,11 +278,29 @@ final class ScheduleView: FlippedView {
         v.layer?.backgroundColor = color.cgColor
         v.layer?.cornerRadius = radius
         v.layer?.cornerCurve = .continuous
-        v.layer?.masksToBounds = true
+        v.layer?.shadowColor = NSColor.black.cgColor
+        v.layer?.shadowOpacity = 0.08
+        v.layer?.shadowRadius = 16
+        v.layer?.shadowOffset = CGSize(width: 0, height: -5)
         if let b = border {
             v.layer?.borderWidth = 1
             v.layer?.borderColor = b.cgColor
         }
+        let sheen = CAGradientLayer()
+        sheen.colors = [NSColor.white.withAlphaComponent(0.26).cgColor,
+                        NSColor.white.withAlphaComponent(0).cgColor]
+        sheen.startPoint = CGPoint(x: 0, y: 0)
+        sheen.endPoint = CGPoint(x: 1, y: 1)
+        sheen.frame = v.bounds
+        sheen.cornerRadius = radius
+        v.layer?.insertSublayer(sheen, at: 0)
+        let glass = NSVisualEffectView(frame: v.bounds)
+        glass.material = .popover
+        glass.blendingMode = .withinWindow
+        glass.state = .active
+        glass.alphaValue = 0.16
+        glass.autoresizingMask = [.width, .height]
+        v.addSubview(glass)
         addSubview(v)
         return v
     }
@@ -260,17 +318,34 @@ final class ScheduleView: FlippedView {
         return v
     }
 
-    private func footerButton(_ title: String, x: CGFloat, y: CGFloat, w: CGFloat,
-                              action: Selector) {
-        let b = NSButton(frame: NSRect(x: x, y: y, width: w, height: 20))
-        b.title = title
-        b.isBordered = false
-        b.bezelStyle = .inline
-        b.font = NSFont.systemFont(ofSize: 11.5, weight: .medium)
-        b.contentTintColor = .secondaryLabelColor
-        b.target = owner
-        b.action = action
-        b.alignment = .center
+    private func menuChip(_ title: String, symbol: String?, rect: NSRect,
+                          primary: Bool = false, action: @escaping () -> Void) {
+        let b = Chip(frame: rect)
+        b.wantsLayer = true
+        b.layer?.cornerRadius = rect.height / 2
+        b.layer?.cornerCurve = .continuous
+        b.layer?.backgroundColor = primary ? Palette.accent.cgColor
+            : dyn(NSColor.white.withAlphaComponent(0.52),
+                  NSColor.white.withAlphaComponent(0.12)).cgColor
+        b.layer?.borderWidth = 1
+        b.layer?.borderColor = dyn(NSColor.white.withAlphaComponent(0.76),
+                                   NSColor.white.withAlphaComponent(0.18)).cgColor
+        b.layer?.shadowColor = NSColor.black.cgColor
+        b.layer?.shadowOpacity = 0.06
+        b.layer?.shadowRadius = 8
+        b.layer?.shadowOffset = CGSize(width: 0, height: -3)
+        if let symbol, let image = NSImage(systemSymbolName: symbol, accessibilityDescription: title) {
+            let icon = NSImageView(frame: NSRect(x: 12, y: (rect.height - 15) / 2, width: 15, height: 15))
+            icon.image = image
+            icon.contentTintColor = primary ? .white : .secondaryLabelColor
+            b.addSubview(icon)
+        }
+        let offset: CGFloat = symbol == nil ? 0 : 32
+        label(b, title, .systemFont(ofSize: 12.5, weight: primary ? .semibold : .medium),
+              primary ? .white : .labelColor,
+              NSRect(x: offset, y: (rect.height - 17) / 2, width: rect.width - offset, height: 17),
+              align: symbol == nil ? .center : .left)
+        b.onTap = action
         addSubview(b)
     }
 
@@ -291,42 +366,36 @@ final class ScheduleView: FlippedView {
         let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
         var y: CGFloat = pad
 
-        // ── 顶部：日期 + 周次
-        label(self, weekdayNames[weekdayNumber(now)],
-              .systemFont(ofSize: 20, weight: .bold), .labelColor,
-              NSRect(x: pad, y: y - 4, width: 80, height: 26))
-        label(self, monthDay(now), .systemFont(ofSize: 13, weight: .medium),
-              .secondaryLabelColor, NSRect(x: pad + 62, y: y + 2, width: 90, height: 20))
-        // 右上角：日历入口
-        let goCal = Chip(frame: NSRect(x: ScheduleView.W - pad - 58, y: y - 2, width: 58, height: 22))
-        goCal.wantsLayer = true
-        goCal.layer?.cornerRadius = 8
-        goCal.layer?.backgroundColor = NSColor.secondaryLabelColor.withAlphaComponent(0.12).cgColor
-        label(goCal, "日历 ›", .systemFont(ofSize: 11.5, weight: .semibold), .secondaryLabelColor,
-              NSRect(x: 0, y: 3, width: 58, height: 16), align: .center)
-        goCal.onTap = { [weak owner] in owner?.openCalendar() }
-        addSubview(goCal)
-
-        let isOdd = owner.isOddWeek(now)
-        let pillW = pill(self, "第\(owner.weekIndex(now))周 · \(isOdd ? "单周" : "双周")",
-                         isOdd ? Palette.accent : Palette.amber, .white,
-                         rect: NSRect(x: 0, y: y + 26, width: 0, height: 20))
-        pillW.frame.origin.x = ScheduleView.W - pad - pillW.frame.width
-        y += 60
+        // 顶栏：日期、周次和两个明确的导航入口
+        label(self, "课表", .systemFont(ofSize: 20, weight: .bold), .labelColor,
+              NSRect(x: pad, y: y, width: 100, height: 26))
+        label(self, "\(monthDay(now)) · \(weekdayNames[weekdayNumber(now)])  ·  第\(owner.weekIndex(now))周 \(owner.isOddWeek(now) ? "单周" : "双周")",
+              .systemFont(ofSize: 11.5), .secondaryLabelColor,
+              NSRect(x: pad, y: y + 28, width: 266, height: 16))
+        menuChip("日历", symbol: nil, rect: NSRect(x: 275, y: y + 5, width: 54, height: 28)) {
+            [weak owner] in owner?.openCalendar()
+        }
+        menuChip("设置", symbol: nil, rect: NSRect(x: 333, y: y + 5, width: 47, height: 28)) {
+            [weak owner] in owner?.openSettings()
+        }
+        y += 58
 
         // ── 下一节大卡
-        let cardH: CGFloat = 108
+        let cardH: CGFloat = 120
         let nextCard = card(NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: cardH),
-                            Palette.accent, radius: 14)
-        if let g = CAGradientLayer() as CAGradientLayer? {
-            g.frame = nextCard.bounds
-            g.colors = [Palette.accent.cgColor, Palette.accent2.cgColor]
-            g.startPoint = CGPoint(x: 0, y: 0)
-            g.endPoint = CGPoint(x: 1, y: 1)
-            g.cornerRadius = 14
-            g.cornerCurve = .continuous
-            nextCard.layer?.insertSublayer(g, at: 0)
-        }
+                            NSColor(srgbRed: 0.22, green: 0.31, blue: 0.63, alpha: 0.94),
+                            radius: 18, border: NSColor.white.withAlphaComponent(0.35))
+        let heroGradient = CAGradientLayer()
+        heroGradient.frame = nextCard.bounds
+        heroGradient.colors = [
+            NSColor(srgbRed: 0.18, green: 0.25, blue: 0.55, alpha: 1).cgColor,
+            NSColor(srgbRed: 0.32, green: 0.44, blue: 0.77, alpha: 1).cgColor
+        ]
+        heroGradient.startPoint = CGPoint(x: 0, y: 1)
+        heroGradient.endPoint = CGPoint(x: 1, y: 0)
+        heroGradient.cornerRadius = 18
+        heroGradient.cornerCurve = .continuous
+        nextCard.layer?.insertSublayer(heroGradient, at: 0)
 
         if let (l, date) = owner.nextLesson() {
             let sameDay = cal.isDateInToday(date)
@@ -335,11 +404,11 @@ final class ScheduleView: FlippedView {
             let where_ = sameDay ? "今天" : (isTmr ? "明天" : weekdayNames[weekdayNumber(date)])
 
             label(nextCard, "下一节 · \(where_)", .systemFont(ofSize: 11.5, weight: .semibold),
-                  NSColor(white: 1, alpha: 0.8), NSRect(x: 18, y: 13, width: 200, height: 15))
-            label(nextCard, l.start, .systemFont(ofSize: 40, weight: .heavy), .white,
-                  NSRect(x: 16, y: 26, width: 190, height: 48))
-            label(nextCard, "\(l.klass) · \(l.subject)", .systemFont(ofSize: 15, weight: .semibold),
-                  NSColor(white: 1, alpha: 0.97), NSRect(x: 18, y: 74, width: 200, height: 20))
+                  NSColor.white.withAlphaComponent(0.76), NSRect(x: 22, y: 17, width: 200, height: 15))
+            label(nextCard, l.start, .monospacedDigitSystemFont(ofSize: 37, weight: .semibold), .white,
+                  NSRect(x: 21, y: 39, width: 170, height: 46))
+            label(nextCard, "\(l.klass) · \(l.subject)", .systemFont(ofSize: 14.5, weight: .medium),
+                  .white, NSRect(x: 23, y: 91, width: 205, height: 19))
 
             let m = minutes(l.start) ?? 0
             let start = cal.date(bySettingHour: m / 60, minute: m % 60, second: 0, of: date) ?? date
@@ -352,32 +421,32 @@ final class ScheduleView: FlippedView {
                                         : "还有 \(minsLeft / 60) 小时 \(minsLeft % 60) 分"
             } else { cd = "还有 \(minsLeft) 分钟" }
 
-            label(nextCard, cd, .systemFont(ofSize: 15, weight: .bold),
-                  NSColor(white: 1, alpha: 0.99),
-                  NSRect(x: nextCard.frame.width - 178, y: 16, width: 160, height: 20), align: .right)
+            let countdown = pill(nextCard, cd, NSColor.white.withAlphaComponent(0.19), .white,
+                                 rect: NSRect(x: 0, y: 15, width: 0, height: 25), fontSize: 11.5)
+            countdown.frame.origin.x = nextCard.frame.width - countdown.frame.width - 18
             let remindAt = max(0, m - lead)
             label(nextCard, "\(twoDigits(remindAt / 60)):\(twoDigits(remindAt % 60)) 提醒",
                   .systemFont(ofSize: 12, weight: .semibold),
-                  NSColor(white: 1, alpha: 0.9),
-                  NSRect(x: nextCard.frame.width - 178, y: 38, width: 160, height: 15), align: .right)
+                  NSColor.white.withAlphaComponent(0.85),
+                  NSRect(x: nextCard.frame.width - 175, y: 54, width: 153, height: 15), align: .right)
             let detail = l.period > 0 ? "\(l.start)–\(l.end) · 第\(l.period)节"
                                       : "\(l.start)–\(l.end)"
             label(nextCard, detail, .systemFont(ofSize: 11.5),
-                  NSColor(white: 1, alpha: 0.75),
-                  NSRect(x: nextCard.frame.width - 178, y: 74, width: 160, height: 15), align: .right)
+                  NSColor.white.withAlphaComponent(0.73),
+                  NSRect(x: nextCard.frame.width - 175, y: 94, width: 153, height: 15), align: .right)
         } else {
-            label(nextCard, "最近都没课 🎉", .systemFont(ofSize: 17, weight: .bold), .white,
+            label(nextCard, "近期没有课程", .systemFont(ofSize: 17, weight: .semibold), .white,
                   NSRect(x: 18, y: 42, width: 280, height: 24))
         }
-        y += cardH + 20
+        y += cardH + 18
 
         // ── 今天
         y = section(self, title: "今天", sub: "\(weekdayNames[weekdayNumber(now)]) · \(monthDay(now))",
                     lessons: owner.lessons(on: now), isToday: true,
                     cardColor: Palette.todayCard, border: Palette.todayBorder,
-                    tint: Palette.accent, empty: "今天已经没课了", y: y, now: now)
+                    tint: Palette.todayAccent, empty: "今天已经没课了", y: y, now: now)
 
-        y += 18
+        y += 14
 
         // ── 明天
         y = section(self, title: "明天", sub: "\(weekdayNames[weekdayNumber(tomorrow)]) · \(monthDay(tomorrow))",
@@ -385,59 +454,43 @@ final class ScheduleView: FlippedView {
                     cardColor: Palette.tomorrowCard, border: Palette.tomorrowBorder,
                     tint: Palette.amber, empty: "明天没课", y: y, now: now)
 
-        y += 20
+        y += 16
 
-        // ── 课前提醒（可调）
-        label(self, "课前提醒", .systemFont(ofSize: 12, weight: .semibold), .secondaryLabelColor,
-              NSRect(x: pad, y: y + 5, width: 80, height: 18))
-        let opts = [5, 10, 15, 20, 30]
-        let chipW: CGFloat = 50, chipGap: CGFloat = 5, chipH: CGFloat = 26
-        let chipStart = pad + 80
-        let cur = owner.leadMinutes
-        for (i, m) in opts.enumerated() {
-            let r = NSRect(x: chipStart + (chipW + chipGap) * CGFloat(i), y: y, width: chipW, height: chipH)
-            let sel = (m == cur)
-            let chip = Chip(frame: r)
-            chip.wantsLayer = true
-            chip.layer?.cornerRadius = 8
-            chip.layer?.cornerCurve = .continuous
-            chip.layer?.backgroundColor = sel ? Palette.accent.cgColor
-                                             : NSColor.secondaryLabelColor.withAlphaComponent(0.12).cgColor
-            if !sel {
-                chip.layer?.borderWidth = 1
-                chip.layer?.borderColor = NSColor.secondaryLabelColor.withAlphaComponent(0.18).cgColor
-            }
-            let t = NSTextField(labelWithString: "\(m)分")
-            t.font = .systemFont(ofSize: 12, weight: sel ? .bold : .medium)
-            t.textColor = sel ? .white : .secondaryLabelColor
-            t.alignment = .center
-            t.frame = NSRect(x: 0, y: 5, width: chipW, height: 16)
-            chip.addSubview(t)
-            chip.onTap = { [weak owner] in owner?.setLead(m) }
-            addSubview(chip)
-        }
-        y += chipH + 14
-
-        // ── 底栏
-        let hair = NSView(frame: NSRect(x: pad, y: y - 10, width: ScheduleView.W - pad * 2, height: 1))
+        // 底栏：提醒选择与主要操作。低频命令放进「更多」。
+        let hair = NSView(frame: NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 1))
         hair.wantsLayer = true
-        hair.layer?.backgroundColor = NSColor.separatorColor.withAlphaComponent(0.6).cgColor
+        hair.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.72).cgColor
         addSubview(hair)
-        y += 10
-        let items: [(String, Selector)] = [
-            ("导入课表", #selector(AppDelegate.importTimetable)),
-            ("下载模板", #selector(AppDelegate.exportTemplate)),
-            ("测试提醒", #selector(AppDelegate.testAlert)),
-            ("设置", #selector(AppDelegate.openSettings)),
-            ("切周次", #selector(AppDelegate.toggleWeek)),
-            ("退出", #selector(AppDelegate.quit))
-        ]
-        let gap: CGFloat = 4
-        let bw = (ScheduleView.W - pad * 2 - gap * CGFloat(items.count - 1)) / CGFloat(items.count)
-        for (i, it) in items.enumerated() {
-            footerButton(it.0, x: pad + (bw + gap) * CGFloat(i), y: y, w: bw, action: it.1)
+        y += 12
+        label(self, "课前提醒", .systemFont(ofSize: 12, weight: .medium), .secondaryLabelColor,
+              NSRect(x: pad, y: y + 8, width: 80, height: 18))
+        let leadChip = Chip(frame: NSRect(x: 283, y: y + 1, width: 97, height: 30))
+        leadChip.wantsLayer = true
+        leadChip.layer?.cornerRadius = 15
+        leadChip.layer?.cornerCurve = .continuous
+        leadChip.layer?.backgroundColor = dyn(NSColor.white.withAlphaComponent(0.55),
+                                              NSColor.white.withAlphaComponent(0.12)).cgColor
+        leadChip.layer?.borderWidth = 1
+        leadChip.layer?.borderColor = dyn(NSColor.white.withAlphaComponent(0.78),
+                                          NSColor.white.withAlphaComponent(0.18)).cgColor
+        label(leadChip, "\(owner.leadMinutes) 分钟  ⌄", .systemFont(ofSize: 12, weight: .medium), .labelColor,
+              NSRect(x: 0, y: 7, width: 97, height: 17), align: .center)
+        leadChip.onTap = { [weak owner, weak leadChip] in
+            guard let owner, let leadChip else { return }
+            owner.showLeadMenu(from: leadChip)
         }
-        y += 20 + pad
+        addSubview(leadChip)
+        y += 43
+
+        menuChip("导入课表", symbol: "square.and.arrow.down", rect: NSRect(x: pad, y: y, width: 132, height: 34), primary: true) {
+            [weak owner] in owner?.importTimetable()
+        }
+        menuChip("更多  ···", symbol: nil, rect: NSRect(x: 275, y: y, width: 105, height: 34)) {
+            [weak owner, weak self] in
+            guard let owner, let self else { return }
+            owner.showMoreMenu(from: self)
+        }
+        y += 34 + pad
 
         setFrameSize(NSSize(width: ScheduleView.W, height: y))
     }
@@ -827,11 +880,6 @@ final class ScheduleView: FlippedView {
         let c = card(NSRect(x: pad, y: top, width: ScheduleView.W - pad * 2, height: h),
                      cardColor, radius: 12, border: border)
         host.addSubview(c)
-        let bar = NSView(frame: NSRect(x: 0, y: 0, width: 4, height: h))
-        bar.wantsLayer = true
-        bar.layer?.backgroundColor = tint.withAlphaComponent(0.85).cgColor
-        c.addSubview(bar)
-
         guard !lessons.isEmpty else {
             label(c, empty, .systemFont(ofSize: 13, weight: .medium), .secondaryLabelColor,
                   NSRect(x: 16, y: 15, width: c.frame.width - 32, height: 18))
@@ -860,7 +908,7 @@ final class ScheduleView: FlippedView {
             if i > 0 {
                 let sep = NSView(frame: NSRect(x: 20, y: ry - 2, width: c.frame.width - 40, height: 1))
                 sep.wantsLayer = true
-                sep.layer?.backgroundColor = border.withAlphaComponent(0.55).cgColor
+                sep.layer?.backgroundColor = border.withAlphaComponent(0.7).cgColor
                 c.addSubview(sep)
             }
 
@@ -871,7 +919,7 @@ final class ScheduleView: FlippedView {
             t.lineBreakMode = .byClipping
 
             label(c, l.klass, .systemFont(ofSize: 14, weight: isNow ? .bold : .semibold),
-                  tint.withAlphaComponent(isPast ? 0.75 : 1), NSRect(x: 122, y: ry + 11, width: 80, height: 18))
+                  .labelColor.withAlphaComponent(alpha), NSRect(x: 122, y: ry + 11, width: 80, height: 18))
             label(c, l.subject, .systemFont(ofSize: 11.5), .secondaryLabelColor.withAlphaComponent(alpha),
                   NSRect(x: 204, y: ry + 12, width: 76, height: 17))
 
@@ -1281,6 +1329,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     var notificationsAllowed = false
     var lastTitleLogged = ""
     var lastTableMTime: Date?
+    let ttsQueue = DispatchQueue(label: "com.mac.classreminder.tts")
+    var ttsCacheText = ""
+    var ttsCacheFile: String?
 
     enum ViewMode { case schedule, calendar, settings }
 
@@ -1381,7 +1432,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         }
 
         if CommandLine.arguments.contains("--voice") {
-            print("zhVoice = \(zhVoice ?? "nil")")
+            let hasTTS = fm.fileExists(atPath: ttsPythonURL.path)
+            print("在线神经语音 = \(ttsVoiceName)（edge-tts，环境\(hasTTS ? "已就绪" : "缺失，将回退")）")
+            print("回退系统语音 = \(zhVoice ?? "nil")")
             let probe = Process()
             probe.executableURL = URL(fileURLWithPath: "/usr/bin/say")
             var a: [String] = []
@@ -1683,7 +1736,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         NSSound.beep()
     }
 
+    /// 播报：优先在线神经网络女声（edge-tts）；离线、缺环境或合成失败时自动回退系统 say
     func speak(_ text: String) {
+        ttsQueue.async { [weak self] in
+            guard let self = self else { return }
+            if let mp3 = self.neuralMp3(for: text) {
+                self.playMp3(mp3)
+            } else {
+                self.speakSystem(text)
+            }
+        }
+    }
+
+    /// 生成（或复用本次缓存的）神经网络语音 mp3；不可用时返回 nil
+    func neuralMp3(for text: String) -> String? {
+        if ttsCacheText == text, let f = ttsCacheFile, fm.fileExists(atPath: f) { return f }
+        guard fm.fileExists(atPath: ttsPythonURL.path) else {
+            log("TTS：未找到 \(ttsPythonURL.path)，回退系统语音")
+            return nil
+        }
+        let out = "/tmp/classreminder_tts_\(abs(text.hashValue)).mp3"
+        let p = Process()
+        p.executableURL = ttsPythonURL
+        p.arguments = ["-m", "edge_tts", "--voice", ttsVoiceName,
+                        "--rate=\(ttsRate)",
+                        "--text", text, "--write-media", out]
+        let err = Pipe()
+        p.standardError = err
+        do { try p.run(); p.waitUntilExit() } catch {
+            log("TTS：启动失败 \(error.localizedDescription)")
+            return nil
+        }
+        let errText = String(data: err.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        let size = (try? fm.attributesOfItem(atPath: out))?[.size] as? Int ?? 0
+        guard p.terminationStatus == 0, size > 3000 else {
+            log("TTS：合成失败 status=\(p.terminationStatus) size=\(size) \(errText.prefix(200))")
+            return nil
+        }
+        log("TTS：已合成 \(size) 字节 → \(out)")
+        ttsCacheText = text
+        ttsCacheFile = out
+        return out
+    }
+
+    func playMp3(_ path: String) {
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/usr/bin/afplay")
+        p.arguments = [path]
+        try? p.run()
+    }
+
+    /// 回退方案：系统自带 say 中文语音
+    func speakSystem(_ text: String) {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: "/usr/bin/say")
         var args: [String] = []
@@ -2132,6 +2236,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         log("手动切换周次 → \(isOddWeek(Date()) ? "单周" : "双周")")
         tick()
         refreshPopover()
+    }
+
+    func showLeadMenu(from view: NSView) {
+        let menu = NSMenu(title: "课前提醒")
+        for value in [5, 10, 15, 20, 30] {
+            let item = NSMenuItem(title: "提前 \(value) 分钟", action: #selector(selectLeadFromMenu(_:)), keyEquivalent: "")
+            item.target = self
+            item.tag = value
+            item.state = value == leadMinutes ? .on : .off
+            menu.addItem(item)
+        }
+        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: view.bounds.height + 2), in: view)
+    }
+
+    @objc private func selectLeadFromMenu(_ sender: NSMenuItem) {
+        setLead(sender.tag)
+    }
+
+    func showMoreMenu(from view: NSView) {
+        let menu = NSMenu(title: "更多")
+        for (title, action) in [
+            ("下载课表模板", #selector(exportTemplate)),
+            ("测试提醒", #selector(testAlert)),
+            ("切换单双周", #selector(toggleWeek)),
+            ("打开课表文件", #selector(openTable))
+        ] {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+            item.target = self
+            menu.addItem(item)
+        }
+        menu.addItem(.separator())
+        let quitItem = NSMenuItem(title: "退出上课提醒", action: #selector(quit), keyEquivalent: "")
+        quitItem.target = self
+        menu.addItem(quitItem)
+        menu.popUp(positioning: nil, at: NSPoint(x: view.bounds.width - 110, y: view.bounds.height - 48), in: view)
     }
 
     func refreshPopover() {
