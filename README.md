@@ -144,7 +144,12 @@ AppIcon-rounded.png   带圆角的展示版（README 用）
 tools/make-icon.py    生成图标的脚本
 tools/make-template.py 生成 xlsx 模板的脚本
 CHANGELOG.md          更新日志
+dist/                 本地打包好的 dmg / zip（不入库）
+exports/              导出的课表与备份（不放桌面，不入库）
+promo/                宣传图与推广文案（不入库）
 ```
+
+> 仓库里只放源码和文档；`dist` `exports` `promo` 三个目录是本地用的，已在 `.gitignore` 里忽略。
 
 ## 🔧 从源码构建
 
