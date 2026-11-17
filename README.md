@@ -156,10 +156,20 @@ promo/                宣传图与推广文案（不入库）
 需要 Xcode Command Line Tools（有 `swiftc` 就行）：
 
 ```bash
-./build.sh
+./build.sh 1.13.0   # 带版本号：写进 Info.plist，产物也带版本号
+./build.sh          # 不带就沿用现有版本
 ```
 
-脚本会编译、临时签名、装到 `/Applications`、写好 LaunchAgent 并启动。
+一次做完五件事：
+
+1. 把版本号写进 `Info.plist`（`CFBundleShortVersionString` + `CFBundleVersion`）
+2. 编译 + 临时签名
+3. 打包 `dist/ClassReminder-<版本>.dmg` / `.zip`
+4. 在 `dist/backups/` 存一份 `上课提醒-<版本>.app`
+5. 装到 `/Applications`，写好 LaunchAgent 并启动
+
+**版本规矩**：每次改动都升版本号，App / dmg / zip / 备份包四处一致；`dist/` 与 `dist/backups/` 只保留最近 5 个版本，更老的自动清掉。
+
 图标由 `tools/make-icon.py` 生成（蓝底白表盘 + 琥珀提醒点），改完跑一遍再 `./build.sh` 即可。
 首次运行会把仓库里的 `timetable.json` 复制成你的数据；之后改仓库那份**不会**覆盖你在用的，要手动 `cp` 过去。
 
