@@ -27,10 +27,11 @@ rm -rf build
 mkdir -p "$OUT/Contents/MacOS" "$OUT/Contents/Resources" "$DIST" "$BACKUPS"
 
 echo "==> 编译"
-swiftc -O -swift-version 5 Sources/main.swift -o "$OUT/Contents/MacOS/$BIN"
+swiftc -O -swift-version 5 Sources/*.swift -o "$OUT/Contents/MacOS/$BIN"
 
 cp Info.plist "$OUT/Contents/Info.plist"
 cp timetable.json "$OUT/Contents/Resources/timetable.json"
+cp school-timetable.json "$OUT/Contents/Resources/school-timetable.json"
 [ -f 课表模板.xlsx ] && cp 课表模板.xlsx "$OUT/Contents/Resources/课表模板.xlsx"
 [ -f AppIcon.icns ] && cp AppIcon.icns "$OUT/Contents/Resources/AppIcon.icns"
 

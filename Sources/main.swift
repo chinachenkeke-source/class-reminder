@@ -207,11 +207,17 @@ final class Chip: FlippedView {
 final class ScheduleView: FlippedView {
 
     static let W: CGFloat = 400
+    static var panelHeight: CGFloat { min(700, (NSScreen.main?.visibleFrame.height ?? 800) - 56) }
     let pad: CGFloat = 20
     weak var owner: AppDelegate?
+    let displayNow: Date
+    var schoolTimeKey = ""
+    private var scheduleBodyStart: CGFloat = 0
+    private var scheduleFooterStart: CGFloat = 0
 
-    init(owner: AppDelegate) {
+    init(owner: AppDelegate, now: Date = Date()) {
         self.owner = owner
+        self.displayNow = now
         super.init(frame: NSRect(x: 0, y: 0, width: ScheduleView.W, height: 600))
         wantsLayer = true
         let background = CAGradientLayer()
@@ -235,6 +241,7 @@ final class ScheduleView: FlippedView {
         blur.autoresizingMask = [.width, .height]
         addSubview(blur)
         build()
+        if owner.viewMode == .schedule { fitPersonalSchedule() }
         // 柔和的色光透过半透明卡片，形成玻璃层次。
         for (frame, color) in [
             (NSRect(x: -110, y: bounds.height - 365, width: 350, height: 350),
@@ -256,8 +263,36 @@ final class ScheduleView: FlippedView {
 
     // MARK: 小工具
 
+    // 主页面共用固定外框；课量变化只影响列表内部滚动。
+    private func fitPersonalSchedule() {
+        let height = Self.panelHeight
+        let footerHeight = frame.height - scheduleFooterStart
+        let footerY = height - footerHeight
+        let body = FlippedView(frame: NSRect(x: 0, y: 0, width: Self.W,
+                                             height: scheduleFooterStart - scheduleBodyStart))
+        for view in subviews where view.frame.minY >= scheduleBodyStart {
+            if view.frame.minY < scheduleFooterStart {
+                let origin = view.frame.origin
+                view.removeFromSuperview()
+                view.setFrameOrigin(NSPoint(x: origin.x, y: origin.y - scheduleBodyStart))
+                body.addSubview(view)
+            } else {
+                view.setFrameOrigin(NSPoint(x: view.frame.minX, y: view.frame.minY + footerY - scheduleFooterStart))
+            }
+        }
+        let scroll = NSScrollView(frame: NSRect(x: 0, y: scheduleBodyStart, width: Self.W,
+                                                height: footerY - scheduleBodyStart - 12))
+        scroll.drawsBackground = false
+        scroll.hasVerticalScroller = true
+        scroll.scrollerStyle = .overlay
+        scroll.autohidesScrollers = true
+        scroll.documentView = body
+        addSubview(scroll)
+        setFrameSize(NSSize(width: Self.W, height: height))
+    }
+
     @discardableResult
-    private func label(_ parent: NSView, _ s: String, _ font: NSFont, _ color: NSColor,
+    func label(_ parent: NSView, _ s: String, _ font: NSFont, _ color: NSColor,
                        _ rect: NSRect, align: NSTextAlignment = .left) -> NSTextField {
         let t = NSTextField(labelWithString: s)
         t.font = font
@@ -318,7 +353,7 @@ final class ScheduleView: FlippedView {
         return v
     }
 
-    private func menuChip(_ title: String, symbol: String?, rect: NSRect,
+    func menuChip(_ title: String, symbol: String?, rect: NSRect,
                           primary: Bool = false, action: @escaping () -> Void) {
         let b = Chip(frame: rect)
         b.wantsLayer = true
@@ -353,6 +388,7 @@ final class ScheduleView: FlippedView {
 
     private func build() {
         switch owner?.viewMode ?? .schedule {
+        case .school, .schoolCalendar: buildSchool()
         case .calendar: buildCalendar()
         case .settings: buildSettings()
         case .schedule: buildSchedule()
@@ -365,6 +401,12 @@ final class ScheduleView: FlippedView {
         let cal = Calendar.current
         let tomorrow = cal.date(byAdding: .day, value: 1, to: now)!
         var y: CGFloat = pad
+
+        menuChip("我的课表", symbol: nil, rect: NSRect(x: pad, y: y, width: 176, height: 30), primary: true) {}
+        menuChip("班级课表", symbol: nil, rect: NSRect(x: 204, y: y, width: 176, height: 30)) {
+            [weak owner] in owner?.viewMode = .school; owner?.refreshPopover()
+        }
+        y += 42
 
         // 顶栏：日期、周次和两个明确的导航入口
         label(self, "课表", .systemFont(ofSize: 20, weight: .bold), .labelColor,
@@ -441,6 +483,7 @@ final class ScheduleView: FlippedView {
         y += cardH + 18
 
         // ── 今天
+        scheduleBodyStart = y
         y = section(self, title: "今天", sub: "\(weekdayNames[weekdayNumber(now)]) · \(monthDay(now))",
                     lessons: owner.lessons(on: now), isToday: true,
                     cardColor: Palette.todayCard, border: Palette.todayBorder,
@@ -457,6 +500,7 @@ final class ScheduleView: FlippedView {
         y += 16
 
         // 底栏：提醒选择与主要操作。低频命令放进「更多」。
+        scheduleFooterStart = y
         let hair = NSView(frame: NSRect(x: pad, y: y, width: ScheduleView.W - pad * 2, height: 1))
         hair.wantsLayer = true
         hair.layer?.backgroundColor = NSColor.white.withAlphaComponent(0.72).cgColor
@@ -875,7 +919,7 @@ final class ScheduleView: FlippedView {
         }
         top += 28
 
-        let rowH: CGFloat = 40
+        let rowH: CGFloat = 36
         let h = lessons.isEmpty ? 48 : CGFloat(lessons.count) * rowH + 12
         let c = card(NSRect(x: pad, y: top, width: ScheduleView.W - pad * 2, height: h),
                      cardColor, radius: 12, border: border)
@@ -1100,7 +1144,7 @@ enum TimetableIO {
 
     // MARK: xlsx
 
-    static func xlsxRows(url: URL) throws -> [[String]] {
+    static func xlsxRows(url: URL, sheetName: String? = nil) throws -> [[String]] {
         let fm = FileManager.default
         let tmp = fm.temporaryDirectory.appendingPathComponent("cr-xlsx-\(UUID().uuidString)")
         try? fm.createDirectory(at: tmp, withIntermediateDirectories: true)
@@ -1137,7 +1181,11 @@ enum TimetableIO {
                     sheets.append((name, rid))
                 }
             }
-            let chosen = sheets.first(where: { $0.name.contains("课表") }) ?? sheets.first
+            if let name = sheetName, !sheets.contains(where: { $0.name == name }) {
+                throw CSVError(msg: "缺少工作表：\(name)")
+            }
+            let chosen = sheetName.flatMap { name in sheets.first(where: { $0.name == name }) }
+                ?? sheets.first(where: { $0.name.contains("课表") }) ?? sheets.first
             if let chosen = chosen, let picked = relTarget(relStr, id: chosen.rid) {
                 sheetFile = picked
             }
@@ -1333,7 +1381,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     var ttsCacheText = ""
     var ttsCacheFile: String?
 
-    enum ViewMode { case schedule, calendar, settings }
+    enum ViewMode { case schedule, calendar, settings, school, schoolCalendar }
+
+    let schoolStore = SchoolStore()
+    var schoolDate = Calendar.current.startOfDay(for: Date())
+    var schoolMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
 
     var viewMode: ViewMode = .schedule
     var calMonth: Date = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Date()))!
@@ -1365,6 +1417,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         try? fm.createDirectory(at: supportDir, withIntermediateDirectories: true)
         seedIfNeeded()
         loadTable()
+        schoolStore.load()
+
+        if let i = CommandLine.arguments.firstIndex(of: "--convert-school"), i + 2 < CommandLine.arguments.count {
+            do {
+                let data = try SchoolIO.parse(URL(fileURLWithPath: CommandLine.arguments[i + 1]))
+                try SchoolStore.encode(data).write(to: URL(fileURLWithPath: CommandLine.arguments[i + 2]), options: .atomic)
+                print("班级课表：\(data.classes.count) 个班，\(data.lessons.count) 条安排")
+            } catch { print(error.localizedDescription); exit(1) }
+            exit(0)
+        }
+        if let i = CommandLine.arguments.firstIndex(of: "--shotschool"), i + 1 < CommandLine.arguments.count {
+            viewMode = CommandLine.arguments.contains("--calendar") ? .schoolCalendar : .school
+            if let j = CommandLine.arguments.firstIndex(of: "--date"), j + 1 < CommandLine.arguments.count,
+               let date = parseDate(CommandLine.arguments[j + 1]) {
+                schoolDate = date
+                schoolMonth = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: date))!
+            }
+            dumpView(ScheduleView(owner: self), to: CommandLine.arguments[i + 1])
+            exit(0)
+        }
 
         if let i = CommandLine.arguments.firstIndex(of: "--dumprows"),
            i + 1 < CommandLine.arguments.count {
@@ -1669,6 +1741,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             log("课表文件有改动，已重新载入")
         }
         tick()
+        if (viewMode == .school || viewMode == .schoolCalendar),
+           let view = popover?.contentViewController?.view as? ScheduleView,
+           view.schoolTimeKey != schoolCurrentKey() {
+            refreshPopover(preserveSchoolScroll: true)
+        }
     }
 
     // MARK: 通知
@@ -2273,11 +2350,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
         menu.popUp(positioning: nil, at: NSPoint(x: view.bounds.width - 110, y: view.bounds.height - 48), in: view)
     }
 
-    func refreshPopover() {
+    func refreshPopover(preserveSchoolScroll: Bool = false) {
         guard popover?.isShown == true else { return }
+        let previousScroll = preserveSchoolScroll
+            ? popover?.contentViewController?.view.subviews.compactMap { $0 as? NSScrollView }.first?.contentView.bounds.origin
+            : nil
         let v = ScheduleView(owner: self)
         popover?.contentViewController?.view = v
         popover?.contentSize = v.frame.size
+        if let origin = previousScroll, let scroll = v.subviews.compactMap({ $0 as? NSScrollView }).first {
+            let maxY = max(0, (scroll.documentView?.frame.height ?? 0) - scroll.contentSize.height)
+            scroll.contentView.scroll(to: NSPoint(x: 0, y: min(origin.y, maxY)))
+            scroll.reflectScrolledClipView(scroll.contentView)
+        }
     }
 
     // MARK: 导入 / 模板

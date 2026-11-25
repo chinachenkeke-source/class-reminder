@@ -1,0 +1,2958 @@
+{
+  "classes" : [
+    "七1班",
+    "八1班",
+    "八2班",
+    "九1班",
+    "九2班",
+    "九3班"
+  ],
+  "effectiveFrom" : "2026-11-25",
+  "lessons" : [
+    {
+      "end" : "09:15",
+      "klass" : "七1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 1
+    },
+    {
+      "end" : "10:05",
+      "klass" : "七1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 1
+    },
+    {
+      "end" : "11:10",
+      "klass" : "七1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 1
+    },
+    {
+      "end" : "12:05",
+      "klass" : "七1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 1
+    },
+    {
+      "end" : "15:10",
+      "klass" : "七1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:00",
+      "klass" : "七1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:55",
+      "klass" : "七1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:40",
+      "klass" : "七1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 1
+    },
+    {
+      "end" : "08:30",
+      "klass" : "七1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 2
+    },
+    {
+      "end" : "09:15",
+      "klass" : "七1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 2
+    },
+    {
+      "end" : "10:05",
+      "klass" : "七1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 2
+    },
+    {
+      "end" : "11:10",
+      "klass" : "七1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 2
+    },
+    {
+      "end" : "12:05",
+      "klass" : "七1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 2
+    },
+    {
+      "end" : "15:10",
+      "klass" : "七1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:00",
+      "klass" : "七1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:55",
+      "klass" : "七1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 2
+    },
+    {
+      "end" : "08:30",
+      "klass" : "七1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 3
+    },
+    {
+      "end" : "09:15",
+      "klass" : "七1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 3
+    },
+    {
+      "end" : "10:05",
+      "klass" : "七1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "音乐",
+      "teacher" : "王藤",
+      "weekday" : 3
+    },
+    {
+      "end" : "11:10",
+      "klass" : "七1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "美术",
+      "teacher" : "唐梦琴",
+      "weekday" : 3
+    },
+    {
+      "end" : "12:05",
+      "klass" : "七1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 3
+    },
+    {
+      "end" : "15:10",
+      "klass" : "七1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:00",
+      "klass" : "七1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:55",
+      "klass" : "七1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:40",
+      "klass" : "七1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 3
+    },
+    {
+      "end" : "08:30",
+      "klass" : "七1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "政治/历史",
+      "teacher" : "肖婷、陈可",
+      "weekday" : 4
+    },
+    {
+      "end" : "09:15",
+      "klass" : "七1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 4
+    },
+    {
+      "end" : "10:05",
+      "klass" : "七1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 4
+    },
+    {
+      "end" : "11:10",
+      "klass" : "七1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 4
+    },
+    {
+      "end" : "12:05",
+      "klass" : "七1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 4
+    },
+    {
+      "end" : "15:10",
+      "klass" : "七1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:00",
+      "klass" : "七1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:55",
+      "klass" : "七1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "信息技术",
+      "teacher" : "周吉士",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:40",
+      "klass" : "七1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 4
+    },
+    {
+      "end" : "08:30",
+      "klass" : "七1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "生物/地理",
+      "teacher" : "伍雯静、李超",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "七1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:05",
+      "klass" : "七1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:55",
+      "klass" : "七1班",
+      "period" : "第4节",
+      "start" : "10:15",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 5
+    },
+    {
+      "end" : "11:45",
+      "klass" : "七1班",
+      "period" : "第5节",
+      "start" : "11:05",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 5
+    },
+    {
+      "end" : "15:10",
+      "klass" : "七1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "班会",
+      "teacher" : "张要群",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:00",
+      "klass" : "七1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "劳动",
+      "teacher" : "张要群",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:55",
+      "klass" : "七1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体健",
+      "teacher" : "",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 1
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 1
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 1
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 1
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1
+    },
+    {
+      "end" : "20:25",
+      "klass" : "八1班",
+      "period" : "第11节",
+      "start" : "19:45",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 1
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 2
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 2
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "音乐",
+      "teacher" : "王藤",
+      "weekday" : 2
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 2
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 2
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 3
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 3
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 3
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 3
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 3
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "信息技术",
+      "teacher" : "周吉士",
+      "weekday" : 4
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 4
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 4
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 4
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 4
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "美术",
+      "teacher" : "唐梦琴",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 4
+    },
+    {
+      "end" : "20:25",
+      "klass" : "八1班",
+      "period" : "第11节",
+      "start" : "19:45",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 4
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "政治/历史",
+      "teacher" : "肖婷、郭静",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语/数学",
+      "teacher" : "韦芳香、唐贱梅",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:55",
+      "klass" : "八1班",
+      "period" : "第4节",
+      "start" : "10:15",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 5
+    },
+    {
+      "end" : "11:45",
+      "klass" : "八1班",
+      "period" : "第5节",
+      "start" : "11:05",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 5
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "班会",
+      "teacher" : "郭静",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "劳动",
+      "teacher" : "郭静",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体健",
+      "teacher" : "",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 1
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "信息技术",
+      "teacher" : "周吉士",
+      "weekday" : 1
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 1
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "生物",
+      "teacher" : "周开创",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 1
+    },
+    {
+      "end" : "20:25",
+      "klass" : "八2班",
+      "period" : "第11节",
+      "start" : "19:45",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 1
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 2
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 2
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "美术",
+      "teacher" : "唐梦琴",
+      "weekday" : 2
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 2
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学/英语",
+      "teacher" : "唐贱梅、宋兴武",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 2
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 3
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 3
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 3
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 3
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 3
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 4
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 4
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "音乐",
+      "teacher" : "王藤",
+      "weekday" : 4
+    },
+    {
+      "end" : "11:10",
+      "klass" : "八2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 4
+    },
+    {
+      "end" : "12:05",
+      "klass" : "八2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 4
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:40",
+      "klass" : "八2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 4
+    },
+    {
+      "end" : "20:25",
+      "klass" : "八2班",
+      "period" : "第11节",
+      "start" : "19:45",
+      "subject" : "生物",
+      "teacher" : "周开创",
+      "weekday" : 4
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "八2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "政治/历史",
+      "teacher" : "肖婷、陈可",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:05",
+      "klass" : "八2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:55",
+      "klass" : "八2班",
+      "period" : "第4节",
+      "start" : "10:15",
+      "subject" : "生物",
+      "teacher" : "周开创",
+      "weekday" : 5
+    },
+    {
+      "end" : "11:45",
+      "klass" : "八2班",
+      "period" : "第5节",
+      "start" : "11:05",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 5
+    },
+    {
+      "end" : "15:10",
+      "klass" : "八2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "班会",
+      "teacher" : "唐贱梅",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:00",
+      "klass" : "八2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "劳动",
+      "teacher" : "唐贱梅",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:55",
+      "klass" : "八2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体健",
+      "teacher" : "",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 1
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 1
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 1
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "体育",
+      "teacher" : "何漪静",
+      "weekday" : 1
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 1
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 2
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 2
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 2
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 2
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 2
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "何漪静",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 2
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 3
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 3
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "语文/化学",
+      "teacher" : "蒋晶晶、周开创",
+      "weekday" : 3
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 3
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 3
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "何漪静",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 3
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 4
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 4
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 4
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九1班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 4
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九1班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 4
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "何漪静",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九1班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 4
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九1班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九1班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九1班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:55",
+      "klass" : "九1班",
+      "period" : "第4节",
+      "start" : "10:15",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 5
+    },
+    {
+      "end" : "11:45",
+      "klass" : "九1班",
+      "period" : "第5节",
+      "start" : "11:05",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 5
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九1班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "班会",
+      "teacher" : "何漪静",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九1班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "劳动",
+      "teacher" : "何漪静",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九1班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体健",
+      "teacher" : "",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "化学",
+      "teacher" : "伍雯静",
+      "weekday" : 1
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 1
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 1
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "体育",
+      "teacher" : "龚麒元",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "化学",
+      "teacher" : "伍雯静",
+      "weekday" : 1
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 2
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "物理",
+      "teacher" : "张梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "化学",
+      "teacher" : "伍雯静",
+      "weekday" : 2
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 2
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "体育",
+      "teacher" : "龚麒元",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 2
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 3
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 3
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 3
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 3
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "体育",
+      "teacher" : "龚麒元",
+      "weekday" : 3
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "物理",
+      "teacher" : "张梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "化学",
+      "teacher" : "伍雯静",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 4
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 4
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "语文/化学",
+      "teacher" : "邓丽娟、伍雯静",
+      "weekday" : 4
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九2班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "物理",
+      "teacher" : "张梅",
+      "weekday" : 4
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九2班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 4
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "龚麒元",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九2班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 4
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九2班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九2班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九2班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "物理",
+      "teacher" : "张梅",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:55",
+      "klass" : "九2班",
+      "period" : "第4节",
+      "start" : "10:15",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 5
+    },
+    {
+      "end" : "11:45",
+      "klass" : "九2班",
+      "period" : "第5节",
+      "start" : "11:05",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 5
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九2班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "班会",
+      "teacher" : "邓丽娟",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九2班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "劳动",
+      "teacher" : "邓丽娟",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九2班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体健",
+      "teacher" : "",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九3班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 1
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九3班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 1
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九3班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 1
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九3班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 1
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九3班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九3班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 1
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九3班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九3班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "政治",
+      "teacher" : "宋兴武",
+      "weekday" : 1
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九3班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 2
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九3班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 2
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九3班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 2
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九3班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 2
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九3班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 2
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九3班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九3班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 2
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九3班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九3班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 2
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九3班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 3
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九3班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 3
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九3班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 3
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九3班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 3
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九3班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "政治",
+      "teacher" : "宋兴武",
+      "weekday" : 3
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九3班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九3班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 3
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九3班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九3班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 3
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九3班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 4
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九3班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 4
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九3班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 4
+    },
+    {
+      "end" : "11:10",
+      "klass" : "九3班",
+      "period" : "第4节",
+      "start" : "10:30",
+      "subject" : "语文/化学",
+      "teacher" : "邓丽娟、周开创",
+      "weekday" : 4
+    },
+    {
+      "end" : "12:05",
+      "klass" : "九3班",
+      "period" : "第5节",
+      "start" : "11:25",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 4
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九3班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "体育",
+      "teacher" : "黄富城",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九3班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 4
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九3班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:40",
+      "klass" : "九3班",
+      "period" : "第10节",
+      "start" : "19:00",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 4
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九3班",
+      "period" : "第1节",
+      "start" : "07:50",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 5
+    },
+    {
+      "end" : "09:15",
+      "klass" : "九3班",
+      "period" : "第2节",
+      "start" : "08:35",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:05",
+      "klass" : "九3班",
+      "period" : "第3节",
+      "start" : "09:25",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 5
+    },
+    {
+      "end" : "10:55",
+      "klass" : "九3班",
+      "period" : "第4节",
+      "start" : "10:15",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 5
+    },
+    {
+      "end" : "11:45",
+      "klass" : "九3班",
+      "period" : "第5节",
+      "start" : "11:05",
+      "subject" : "政治",
+      "teacher" : "宋兴武",
+      "weekday" : 5
+    },
+    {
+      "end" : "15:10",
+      "klass" : "九3班",
+      "period" : "第6节",
+      "start" : "14:30",
+      "subject" : "班会",
+      "teacher" : "宋兴武",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:00",
+      "klass" : "九3班",
+      "period" : "第7节",
+      "start" : "15:20",
+      "subject" : "劳动",
+      "teacher" : "宋兴武",
+      "weekday" : 5
+    },
+    {
+      "end" : "16:55",
+      "klass" : "九3班",
+      "period" : "第8节",
+      "start" : "16:15",
+      "subject" : "体健",
+      "teacher" : "",
+      "weekday" : 5
+    },
+    {
+      "end" : "08:30",
+      "klass" : "七1班",
+      "period" : "早读",
+      "start" : "08:10",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 1
+    },
+    {
+      "end" : "07:50",
+      "klass" : "七1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 2
+    },
+    {
+      "end" : "07:50",
+      "klass" : "七1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 3
+    },
+    {
+      "end" : "07:50",
+      "klass" : "七1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 4
+    },
+    {
+      "end" : "07:50",
+      "klass" : "七1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 5,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "07:50",
+      "klass" : "七1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "道法",
+      "teacher" : "肖婷",
+      "weekday" : 5,
+      "weeks" : "even"
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八1班",
+      "period" : "早读",
+      "start" : "08:10",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 1
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 2
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "张艳芳",
+      "weekday" : 3
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 4
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 5,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "道法",
+      "teacher" : "肖婷",
+      "weekday" : 5,
+      "weeks" : "even"
+    },
+    {
+      "end" : "08:30",
+      "klass" : "八2班",
+      "period" : "早读",
+      "start" : "08:10",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 1
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 2
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 3
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "宋兴武",
+      "weekday" : 4
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 5,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "07:50",
+      "klass" : "八2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "道法",
+      "teacher" : "肖婷",
+      "weekday" : 5,
+      "weeks" : "even"
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九1班",
+      "period" : "早读",
+      "start" : "08:10",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 1
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 2
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "韦芳香",
+      "weekday" : 3
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "蒋晶晶",
+      "weekday" : 4
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 5,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九1班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 5,
+      "weeks" : "even"
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九2班",
+      "period" : "早读",
+      "start" : "08:10",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 1
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 2
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 3
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "张要群",
+      "weekday" : 4
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 5,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九2班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 5,
+      "weeks" : "even"
+    },
+    {
+      "end" : "08:30",
+      "klass" : "九3班",
+      "period" : "早读",
+      "start" : "08:10",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 1
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九3班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 2
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九3班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "英语",
+      "teacher" : "黄春晓",
+      "weekday" : 3
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九3班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "语文",
+      "teacher" : "邓丽娟",
+      "weekday" : 4
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九3班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "政治",
+      "teacher" : "宋兴武",
+      "weekday" : 5,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "07:50",
+      "klass" : "九3班",
+      "period" : "早读",
+      "start" : "07:30",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 5,
+      "weeks" : "even"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "七1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 1,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "七1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1,
+      "weeks" : "even"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "七1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:00",
+      "klass" : "七1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:00",
+      "klass" : "七1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "生物",
+      "teacher" : "伍雯静",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "数学",
+      "teacher" : "唐贱梅",
+      "weekday" : 1
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "地理",
+      "teacher" : "李超",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "生物",
+      "teacher" : "周开创",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:00",
+      "klass" : "八2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 1,
+      "weeks" : "even"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "数学",
+      "teacher" : "聂乾",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九1班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "政治",
+      "teacher" : "肖婷",
+      "weekday" : 1,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "历史",
+      "teacher" : "郭静",
+      "weekday" : 1,
+      "weeks" : "even"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "数学",
+      "teacher" : "张梅",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "物理",
+      "teacher" : "张梅",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九2班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "化学",
+      "teacher" : "伍雯静",
+      "weekday" : 4
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九3班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "政治",
+      "teacher" : "宋兴武",
+      "weekday" : 1,
+      "weeks" : "odd"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九3班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "历史",
+      "teacher" : "陈可",
+      "weekday" : 1,
+      "weeks" : "even"
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九3班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "物理",
+      "teacher" : "赵修恒",
+      "weekday" : 2
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九3班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "数学",
+      "teacher" : "谭阳",
+      "weekday" : 3
+    },
+    {
+      "end" : "19:00",
+      "klass" : "九3班",
+      "period" : "晚读",
+      "start" : "18:40",
+      "subject" : "化学",
+      "teacher" : "周开创",
+      "weekday" : 4
+    }
+  ]
+}

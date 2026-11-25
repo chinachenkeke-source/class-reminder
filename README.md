@@ -3,7 +3,7 @@
 <h1 align="center">上课提醒 · ClassReminder</h1>
 
 <p align="center">
-  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.12.0-blue" alt="version"></a>
+  <a href="../../releases/latest"><img src="https://img.shields.io/badge/version-1.13.5-blue" alt="version"></a>
   <img src="https://img.shields.io/badge/macOS-13%2B-black" alt="platform">
   <img src="https://img.shields.io/badge/Swift-5-orange" alt="swift">
   <img src="https://img.shields.io/badge/dependencies-0-green" alt="deps">
@@ -16,8 +16,8 @@
 </p>
 
 <p align="center">
-  写给一线老师的 macOS 菜单栏工具 · 支持单双周课表、CSV 导入、开机自启<br>
-  单文件 Swift，零第三方依赖，不联网
+  写给一线老师的 macOS 菜单栏工具 · 个人上课提醒 + 各班课表查询<br>
+  原生 Swift，课表本地保存，在线语音不可用时回退系统语音
 </p>
 
 ## 📸 界面
@@ -26,19 +26,41 @@
 <sub>菜单栏：时钟图标 + 下一节「时间 + 班级」</sub></p>
 
 <p align="center"><img src="preview.png" width="400" alt="面板"><br>
-<sub>面板：玻璃质感的下一节、今天与明天课表，以及精简操作区</sub></p>
+<sub>我的课表：下一节、今天与明天课表，保留个人提醒与导入功能</sub></p>
+
+<p align="center"><img src="preview-school.png" width="400" alt="班级当日课表，蓝字为我的课，浅蓝底为当前课程"><br>
+<sub>班级课表：蓝字标记我的课；浅蓝底与「进行中」标记当前课程（11月25日09:30演示）</sub></p>
+
+<p align="center"><img src="preview-school-calendar.png" width="400" alt="按班级和日期查询完整课程的月历"><br>
+<sub>班级日历：选择班级与日期，查看早读、正课、晚读和教师</sub></p>
 
 <p align="center"><img src="preview-alert.png" width="540" alt="课前提醒"><br>
 <sub>提前 15 分钟：蓝色卡片 + 三连响 + 语音播报</sub></p>
 
 <p align="center"><img src="preview-alert-start.png" width="540" alt="到点提醒"><br>
-<sub>到点：琥珀色卡片再提醒一次，响三声、不语音</sub></p>
+<sub>到点：大卡片再提醒一次，响三声、不语音</sub></p>
+
+## v1.13.5 新增了什么
+
+本次发布汇总 v1.13.0–v1.13.5 的更新，原有个人提醒功能保留。
+
+| 新功能 | 使用方式 |
+|---|---|
+| 两种课表模式 | 顶部切换「我的课表 / 班级课表」 |
+| 各班完整课程 | 选择班级，按时间查看早读、正课和晚读，显示科目与教师 |
+| 日期与月历查询 | 左右切换日期，或进入日历选日；切换班级保留日期 |
+| 我的课用蓝字 | 按个人课表的班级、时间、科目与单双周匹配，支持合班早晚读 |
+| 当前课程用浅蓝底 | 查看今天时显示当前节次、下课时间及「进行中」，每15秒检查更新 |
+| 统一面板尺寸 | 两个主页面与班级日历同宽同高，底部操作固定，列表内部滚动 |
+| 独立更新各班课表 | 导入同结构的学校 xlsx，不覆盖个人课表、不增加个人提醒 |
+
+已内置七1、八1、八2、九1、九2、九3共六个班的示例安排。查询更早的学期内日期时，会注明按当前版本课表参考；历史实际调课需以对应旧版课表为准。
 
 ## ✨ 功能
 
 - 🕘 **菜单栏常驻**：不占 Dock，点一下就是课表
 - ⏰ **提前提醒**：从下方菜单选择 5 / 10 / 15 / 20 / 30 分钟，立即生效
-- 🔔 **两次提醒**：提前 N 分钟蓝色卡片 + 语音；到点换琥珀色卡片再响三声，不语音
+- 🔔 **两次提醒**：提前 N 分钟蓝色卡片 + 语音；到点大卡片再响三声，不语音
 - 🔊 **叫得住人**：大卡片置顶 + 连响三次 + 中文女声播报两遍
 - 📅 **万年历**：1900–2100 任意年月都能翻，每格带农历 / 节气；学期内标出当天课量
 - 🔴 **课型配色**：正课（历史、科学）红点 + 红色班名，早读 / 晚读 / 晚自习 / 培优蓝点
@@ -51,19 +73,36 @@
 
 ## 📦 安装
 
-1. 到 Releases 下载 `ClassReminder-1.12.0.dmg`
+1. 到 [最新发布页](https://github.com/chinachenkeke-source/class-reminder/releases/latest) 下载 `ClassReminder-1.13.5.dmg`（也提供 zip）
 2. 双击挂载，把 `上课提醒.app` 拖进「应用程序」
 3. 第一次打开被拦，就在 App 上右键 →「打开」（没有开发者签名）
 
 | 内容 | 位置 |
 |---|---|
 | 课表数据 | `~/Library/Application Support/ClassReminder/timetable.json` |
+| 各班课表数据 | `~/Library/Application Support/ClassReminder/school-timetable.json`（更新各班课表后生成） |
 | 运行日志 | `~/Library/Logs/ClassReminder.log` |
 | 开机自启 | `~/Library/LaunchAgents/com.mac.classreminder.plist` |
 
-卸载：面板里点「退出」，再删掉上表三项和「应用程序」里的 App。
+升级：退出旧版后用新版替换「应用程序」里的 App，个人课表和提醒偏好会保留。
+
+卸载：面板里点「退出」，再删除上表列出的数据、日志、自启项和「应用程序」里的 App。
 
 ## 🖱 怎么用
+
+### 班级课表查询
+
+顶部「我的课表 / 班级课表」切换模式。班级课表中选择班级，再用左右箭头查前后一天，或进入「日历」点击日期。切换班级保留日期，班级选择会记住；课程列表可上下滚动，包含早读、正课、晚读及教师姓名。
+
+班级课表及日历详情中，属于个人课表的课程显示蓝色文字。按当天班级、单双周、时间与科目匹配，也支持合班早晚读。查看今天时，当前正在上的课程显示浅蓝底和「进行中」，顶部提示当前节次；随上课、下课时间自动更新，保留列表滚动位置。
+
+两个主页面与班级日历共用固定面板尺寸（按屏幕可用高度适配），底部操作固定，课程多时列表内部滚动。班级、日期标题居中，课程按节次与时间、课程、教师三列展示。
+
+已内置 2026-11-25 起生效的初中部六个班课表。七1班周四第1节、八2班周五第2节，按已确认的个人课表显示：单周历史（陈可）、双周政治（肖婷）。其他组合科目完整保留；早晚读按原表单双周安排匹配，周次采用现有学期设置。生效日期前也可按当前课表查询，界面会标注版本参考；学期外不显示课程。
+
+「更新各班课表」支持与本次学校总表同结构的 xlsx（含「班级总课表」「早晚读」两页，标题含生效年月日），不要求改填个人课表模板。人数页不导入。各班数据独立保存在 `~/Library/Application Support/ClassReminder/school-timetable.json`，不会加入个人提醒；未更新时使用 App 内置数据。
+
+### 我的课表
 
 - **看课表**：点菜单栏图标，弹出的面板里是下一节、今天、明天
 - **调提前量**：面板底部点当前提醒时间，选择 5 / 10 / 15 / 20 / 30 分钟
@@ -128,13 +167,17 @@
 ## 🗂 目录结构
 
 ```
-Sources/main.swift    全部源码：课表逻辑 / 菜单栏 / 面板 / 提醒 / CSV·xlsx 导入
+Sources/main.swift    个人课表逻辑 / 菜单栏 / 面板 / 提醒 / CSV·xlsx 导入
+Sources/SchoolSchedule.swift  各班总课表解析、独立数据和查询界面
+school-timetable.json  内置的学校各班课表（含早晚读）
 Info.plist            App 信息（LSUIElement = 菜单栏模式）
 timetable.json        示例课表，首次运行会复制成用户数据
 课表模板.xlsx          空白模板（带下拉选择）
 课表示例.csv           填好的 CSV 例子（27 条）
 build.sh              一键编译 + 安装
 preview.png           面板截图
+preview-school.png    班级当日课表与当前课程演示
+preview-school-calendar.png  班级月历与课程详情
 preview-alert.png     提前提醒截图（蓝）
 preview-alert-start.png  到点提醒截图（琥珀）
 statusbar.png         菜单栏示意
@@ -143,6 +186,8 @@ AppIcon.png           图标 1024 原图（无 alpha，打进 .app）
 AppIcon-rounded.png   带圆角的展示版（README 用）
 tools/make-icon.py    生成图标的脚本
 tools/make-template.py 生成 xlsx 模板的脚本
+tools/check-school.sh  班级课表解析、查询与布局检查
+tests/SchoolScheduleChecks.swift  班级课表验证用例
 CHANGELOG.md          更新日志
 dist/                 本地打包好的 dmg / zip（不入库）
 exports/              导出的课表与备份（不放桌面，不入库）
@@ -156,7 +201,7 @@ promo/                宣传图与推广文案（不入库）
 需要 Xcode Command Line Tools（有 `swiftc` 就行）：
 
 ```bash
-./build.sh 1.13.0   # 带版本号：写进 Info.plist，产物也带版本号
+./build.sh 1.13.5   # 带版本号：写进 Info.plist，产物也带版本号
 ./build.sh          # 不带就沿用现有版本
 ```
 
@@ -187,6 +232,17 @@ ClassReminder --shotalert o.png  # 渲染「提前」提醒预览图
 ClassReminder --shotstart o.png  # 渲染「到点」提醒预览图
 ClassReminder --teststart        # 立刻弹一个到点提醒（试样式）
 ClassReminder --shotbar o.png    # 渲染菜单栏示意
+ClassReminder --shotschool o.png --date 2026-11-25  # 渲染班级课表
+ClassReminder --shotschool o.png --calendar --date 2026-11-25  # 渲染班级日历
+ClassReminder --convert-school 学校总课表.xlsx school-timetable.json  # 转换同结构学校总表
+```
+
+班级查询检查（不会启动提醒或修改使用中的个人课表）：
+
+```bash
+bash tools/check-school.sh
+# 可选：校验学校原始 xlsx，并输出界面预览到已存在的目录
+bash tools/check-school.sh 学校总课表.xlsx /tmp/class-reminder-previews
 ```
 
 ## 🚧 已知限制
@@ -198,6 +254,13 @@ ClassReminder --shotbar o.png    # 渲染菜单栏示意
 ## 🗒 更新日志
 
 完整记录见 [CHANGELOG.md](CHANGELOG.md)。
+
+- **v1.13.5**（2026-11-25）：当前课程浅蓝底、个人课程蓝字，随时间自动更新
+- **v1.13.4**（2026-11-25）：主页面统一尺寸，班级和日期居中，课程三列对齐
+- **v1.13.3**（2026-11-25）：班级查询增加个人课程识别
+- **v1.13.2**（2026-11-25）：支持按当前课表参考查询更早的学期内日期
+- **v1.13.1**（2026-11-25）：确认两处共用正课的历史／政治单双周安排
+- **v1.13.0**（2026-11-25）：新增六个班的当日与日历课表查询，早读、正课、晚读统一展示
 
 - **v1.12.0**（2026-11-17）：语音改为在线神经网络女声（晓晓），断网自动回退系统语音
 - **v1.11.1**（2026-11-16）：日历详情里的班名也跟着课型变红/变蓝
