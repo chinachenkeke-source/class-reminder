@@ -6,3 +6,5 @@ promo/
 .DS_Store
 *.dmg
 *.zip
+.hvigor/
+oh_modules/

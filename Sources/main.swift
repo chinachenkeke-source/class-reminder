@@ -2352,13 +2352,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
 
     func refreshPopover(preserveSchoolScroll: Bool = false) {
         guard popover?.isShown == true else { return }
-        let previousScroll = preserveSchoolScroll
-            ? popover?.contentViewController?.view.subviews.compactMap { $0 as? NSScrollView }.first?.contentView.bounds.origin
-            : nil
+        var previousScroll: [String: NSPoint] = [:]
+        if preserveSchoolScroll {
+            for scroll in popover?.contentViewController?.view.subviews.compactMap({ $0 as? NSScrollView }) ?? [] {
+                if let id = scroll.identifier?.rawValue { previousScroll[id] = scroll.contentView.bounds.origin }
+            }
+        }
         let v = ScheduleView(owner: self)
         popover?.contentViewController?.view = v
         popover?.contentSize = v.frame.size
-        if let origin = previousScroll, let scroll = v.subviews.compactMap({ $0 as? NSScrollView }).first {
+        for scroll in v.subviews.compactMap({ $0 as? NSScrollView }) {
+            guard let id = scroll.identifier?.rawValue, let origin = previousScroll[id] else { continue }
             let maxY = max(0, (scroll.documentView?.frame.height ?? 0) - scroll.contentSize.height)
             scroll.contentView.scroll(to: NSPoint(x: 0, y: min(origin.y, maxY)))
             scroll.reflectScrolledClipView(scroll.contentView)

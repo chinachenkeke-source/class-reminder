@@ -1,6 +1,26 @@
 import AppKit
 import UniformTypeIdentifiers
 
+final class SchoolRegularCorner: FlippedView {
+    var selected = false
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+    override func draw(_ dirtyRect: NSRect) {
+        let ribbon = NSBezierPath()
+        ribbon.move(to: NSPoint(x: 0, y: 8))
+        ribbon.line(to: NSPoint(x: 8, y: 0))
+        ribbon.line(to: NSPoint(x: 16, y: 0))
+        ribbon.line(to: NSPoint(x: 0, y: 16))
+        ribbon.close()
+        Palette.regular.setFill()
+        ribbon.fill()
+        if selected {
+            NSColor.white.withAlphaComponent(0.85).setStroke()
+            ribbon.lineWidth = 0.7
+            ribbon.stroke()
+        }
+    }
+}
+
 // 查询数据与个人提醒数据完全独立。
 struct SchoolLesson: Codable {
     var klass: String
@@ -11,6 +31,7 @@ struct SchoolLesson: Codable {
     var subject: String
     var teacher: String
     var weeks: String?
+    var isBreak: Bool { ["大课间", "午休", "晚餐"].contains(period) }
 }
 
 struct SchoolTimetable: Codable {
@@ -47,6 +68,12 @@ final class SchoolStore {
 }
 
 enum SchoolIO {
+    static func includesClass(_ group: String, _ klass: String) -> Bool {
+        let target = className(klass).replacingOccurrences(of: "班", with: "")
+        return group.replacingOccurrences(of: "／", with: "/").split(separator: "/").contains {
+            className(String($0)).replacingOccurrences(of: "班", with: "") == target
+        }
+    }
     static let subjects = ["信息技术", "道德与法治", "政治", "道法", "历史", "生物", "地理", "语文", "数学", "英语", "物理", "化学", "体育", "音乐", "美术", "班会", "劳动", "体健"]
 
     static func className(_ text: String) -> String {
@@ -142,6 +169,22 @@ enum SchoolIO {
 }
 
 extension AppDelegate {
+    func mySchoolLessons(on date: Date) -> [Lesson] {
+        guard inSemester(date), !isSkipped(date) else { return [] }
+        return lessons(on: date).filter { SchoolIO.includesClass($0.klass, schoolStore.selectedClass) }
+    }
+    func schoolDayMarkers(on date: Date) -> (regular: Int, reading: Int) {
+        var regular = 0, reading = 0
+        for lesson in mySchoolLessons(on: date) {
+            if lesson.period == 0 || lesson.subject.contains("早读") || lesson.subject.contains("晚读") {
+                reading += 1
+            } else if lesson.period > 0 && !lesson.subject.contains("晚自习") && !lesson.subject.contains("晚修") {
+                // 培优按正课标识，不沿用个人日历的课型配色规则。
+                regular += 1
+            }
+        }
+        return (regular, reading)
+    }
     func isSchoolLessonCurrent(_ lesson: SchoolLesson, on date: Date, now: Date = Date()) -> Bool {
         guard Calendar.current.isDate(date, inSameDayAs: now),
               let start = minutes(lesson.start), let end = minutes(lesson.end) else { return false }
@@ -154,8 +197,32 @@ extension AppDelegate {
         schoolItems(on: schoolDate).first { isSchoolLessonCurrent($0, on: schoolDate, now: now) }
     }
 
+    func schoolBreaks(on date: Date) -> [SchoolLesson] {
+        let items = schoolItems(on: date)
+        guard !items.isEmpty else { return [] }
+        let morningEnd = items.first { $0.start > "10:05" && $0.start < "10:30" }?.start ?? "10:30"
+        return [("大课间", "10:05", morningEnd), ("午休", "12:05", "14:30"), ("晚餐", "17:45", "18:40")].map {
+            SchoolLesson(klass: schoolStore.selectedClass, weekday: weekdayNumber(date), period: $0.0,
+                         start: $0.1, end: $0.2, subject: $0.0, teacher: "", weeks: nil)
+        }
+    }
+
+    func currentSchoolBreak(now: Date = Date()) -> SchoolLesson? {
+        guard currentSchoolLesson(now: now) == nil else { return nil }
+        return schoolBreaks(on: schoolDate).first { isSchoolLessonCurrent($0, on: schoolDate, now: now) }
+    }
+
+    func schoolTimeline(on date: Date) -> [SchoolLesson] {
+        let items = schoolItems(on: date)
+        let breaks = schoolBreaks(on: date).filter { rest in
+            let following = rest.period == "大课间" ? "第4节" : (rest.period == "午休" ? "第6节" : "晚读")
+            return items.contains { $0.period == following }
+        }
+        return (items + breaks).sorted { $0.start < $1.start }
+    }
+
     func schoolCurrentKey(now: Date = Date()) -> String {
-        let lesson = currentSchoolLesson(now: now)
+        let lesson = currentSchoolLesson(now: now) ?? currentSchoolBreak(now: now)
         return "\(dateKey(now))#\(lesson?.period ?? "")#\(lesson?.start ?? "")"
     }
 
@@ -163,10 +230,9 @@ extension AppDelegate {
         guard inSemester(date), !isSkipped(date) else { return false }
         let klass = SchoolIO.className(lesson.klass)
         return lessons(on: date).contains { personal in
-            let classes = personal.klass.replacingOccurrences(of: "／", with: "/")
-                .split(separator: "/").map { SchoolIO.className(String($0)).replacingOccurrences(of: "班", with: "") }
-            guard classes.contains(klass.replacingOccurrences(of: "班", with: "")),
+            guard SchoolIO.includesClass(personal.klass, klass),
                   personal.start == lesson.start, personal.end == lesson.end else { return false }
+            if lesson.subject == "培优", personal.subject.hasSuffix("培优") { return true }
             var subject = personal.subject
             for suffix in ["早读", "晚读", "培优"] where subject.hasSuffix(suffix) {
                 subject = String(subject.dropLast(suffix.count))
@@ -178,7 +244,7 @@ extension AppDelegate {
     func schoolItems(on date: Date) -> [SchoolLesson] {
         guard let data = schoolStore.data, inSemester(date) else { return [] }
         let odd = isOddWeek(date)
-        return data.lessons.filter {
+        var items = data.lessons.filter {
             $0.klass == schoolStore.selectedClass && $0.weekday == weekdayNumber(date)
                 && ($0.weeks == nil || ($0.weeks == "odd") == odd)
         }.map { lesson in
@@ -192,7 +258,14 @@ extension AppDelegate {
                 resolved.teacher = odd ? "陈可" : "肖婷"
             }
             return resolved
-        }.sorted { $0.start < $1.start }
+        }
+        // 与手机版一致：有课的工作日补齐总表中留空的第9节培优。
+        if (1...5).contains(weekdayNumber(date)), data.classes.contains(schoolStore.selectedClass),
+           !items.isEmpty, !items.contains(where: { $0.period == "第9节" }) {
+            items.append(SchoolLesson(klass: schoolStore.selectedClass, weekday: weekdayNumber(date),
+                                      period: "第9节", start: "17:05", end: "17:45", subject: "培优", teacher: "", weeks: nil))
+        }
+        return items.sorted { $0.start < $1.start }
     }
 
     func schoolEmptyText() -> String {
@@ -242,6 +315,7 @@ extension ScheduleView {
         guard let owner else { return }
         schoolTimeKey = owner.schoolCurrentKey(now: displayNow)
         let current = owner.currentSchoolLesson(now: displayNow)
+        let currentBreak = owner.currentSchoolBreak(now: displayNow)
         let calendar = owner.viewMode == .schoolCalendar
         var y: CGFloat = 20
         menuChip("我的课表", symbol: nil, rect: NSRect(x: 20, y: y, width: 176, height: 30)) {
@@ -274,6 +348,8 @@ extension ScheduleView {
         y += 42
         if calendar {
             y = schoolCalendarGrid(y, owner)
+            buildSchoolCalendarDetails(y, owner)
+            return
         } else {
             menuChip("‹", symbol: nil, rect: NSRect(x: 20, y: y, width: 30, height: 28)) { [weak owner] in owner?.schoolShiftDay(-1) }
             menuChip("›", symbol: nil, rect: NSRect(x: 54, y: y, width: 30, height: 28)) { [weak owner] in owner?.schoolShiftDay(1) }
@@ -288,12 +364,14 @@ extension ScheduleView {
                 ? "按 \(data.effectiveFrom) 版课表参考" : nil
         }
         let liveStatus = Calendar.current.isDate(owner.schoolDate, inSameDayAs: displayNow)
-            ? current.map { "正在上\($0.period) · \($0.end) 下课" } ?? "当前没有正在进行的课程"
+            ? current.map { "正在上\($0.period) · \($0.end) 下课" }
+                ?? currentBreak.map { "\($0.period)中 · \($0.end) 结束" } ?? "当前没有正在进行的课程"
             : "早读、正课、晚读"
         label(self, reference ?? liveStatus, .systemFont(ofSize: 10.5), .secondaryLabelColor,
               NSRect(x: 20, y: y - 3, width: 255, height: 18))
         y += 24
         let items = owner.schoolItems(on: owner.schoolDate)
+        let timeline = owner.schoolTimeline(on: owner.schoolDate)
         label(self, "蓝色为我的课", .systemFont(ofSize: 11, weight: .medium), Palette.accent,
               NSRect(x: 280, y: y - 26, width: 100, height: 18), align: .right)
         for (x, width, title) in [(CGFloat(12), CGFloat(100), "节次 / 时间"), (116, 120, "课程"), (242, 104, "教师")] {
@@ -303,7 +381,90 @@ extension ScheduleView {
         y += 26
         let footerY = Self.panelHeight - 50
         let viewport = footerY - 14 - y
-        let scroll = NSScrollView(frame: NSRect(x: 20, y: y, width: 360, height: viewport))
+        schoolCourseList(owner, timeline: timeline, frame: NSRect(x: 20, y: y, width: 360, height: viewport))
+        y += viewport + 14
+        menuChip("更新各班课表", symbol: "square.and.arrow.down", rect: NSRect(x: 20, y: y, width: 150, height: 30)) { [weak owner] in owner?.importSchool() }
+        label(self, "共\(items.count)节 · 上下滚动查看", .systemFont(ofSize: 11), .secondaryLabelColor, NSRect(x: 180, y: y + 7, width: 200, height: 18), align: .right)
+        setFrameSize(NSSize(width: Self.W, height: Self.panelHeight))
+    }
+
+    private func buildSchoolCalendarDetails(_ top: CGFloat, _ owner: AppDelegate) {
+        let date = owner.schoolDate
+        let height = Self.panelHeight
+        let divider = NSView(frame: NSRect(x: 400, y: 20, width: 1, height: height - 40))
+        divider.wantsLayer = true
+        divider.layer?.backgroundColor = NSColor.separatorColor.withAlphaComponent(0.35).cgColor
+        addSubview(divider)
+
+        label(self, "\(owner.schoolStore.selectedClass) · 完整课表", .systemFont(ofSize: 18, weight: .bold), .labelColor,
+              NSRect(x: 420, y: 20, width: 360, height: 26), align: .center)
+        label(self, "\(dateKey(date)) \(weekdayNames[weekdayNumber(date)]) · \(owner.weekLabel(date))",
+              .systemFont(ofSize: 11.5), .secondaryLabelColor, NSRect(x: 420, y: 52, width: 360, height: 18), align: .center)
+        let current = owner.currentSchoolLesson(now: displayNow)
+        let rest = owner.currentSchoolBreak(now: displayNow)
+        let status: String
+        if Calendar.current.isDate(date, inSameDayAs: displayNow) {
+            status = current.map { "正在上\($0.period) · \($0.end) 下课" }
+                ?? rest.map { "\($0.period)中 · \($0.end) 结束" } ?? "当前没有正在进行的课程"
+        } else if let data = owner.schoolStore.data, dateKey(date) < data.effectiveFrom, owner.inSemester(date) {
+            status = "按 \(data.effectiveFrom) 版课表参考"
+        } else { status = "早读、正课、培优、晚读" }
+        label(self, status, .systemFont(ofSize: 11), .secondaryLabelColor,
+              NSRect(x: 420, y: 80, width: 360, height: 18), align: .center)
+        for (x, width, title) in [(CGFloat(12), CGFloat(100), "节次 / 时间"), (116, 120, "课程"), (242, 104, "教师")] {
+            label(self, title, .systemFont(ofSize: 11, weight: .medium), .secondaryLabelColor,
+                  NSRect(x: 420 + x, y: 110, width: width, height: 18), align: .center)
+        }
+        schoolCourseList(owner, timeline: owner.schoolTimeline(on: date),
+                         frame: NSRect(x: 420, y: 138, width: 360, height: height - 202))
+        label(self, "共\(owner.schoolItems(on: date).count)节 · 蓝色为我的课 · 可上下滚动", .systemFont(ofSize: 11), .secondaryLabelColor,
+              NSRect(x: 420, y: height - 43, width: 360, height: 20), align: .center)
+
+        label(self, "\(monthDay(date)) \(weekdayNames[weekdayNumber(date)])", .systemFont(ofSize: 14, weight: .bold), .labelColor,
+              NSRect(x: 20, y: top + 4, width: 360, height: 21))
+        let mine = owner.mySchoolLessons(on: date)
+        label(self, "我在\(owner.schoolStore.selectedClass)的课 · \(mine.count)节", .systemFont(ofSize: 12, weight: .semibold), Palette.accent,
+              NSRect(x: 20, y: top + 31, width: 360, height: 19))
+        let scrollY = top + 58
+        let viewport = height - 64 - scrollY
+        let scroll = NSScrollView(frame: NSRect(x: 20, y: scrollY, width: 360, height: viewport))
+        scroll.identifier = NSUserInterfaceItemIdentifier("school-personal-summary")
+        scroll.hasVerticalScroller = true
+        scroll.scrollerStyle = .overlay
+        scroll.autohidesScrollers = true
+        scroll.drawsBackground = false
+        let content = FlippedView(frame: NSRect(x: 0, y: 0, width: 360, height: max(viewport, CGFloat(mine.count) * 58)))
+        if mine.isEmpty {
+            label(content, "当天没有我的课", .systemFont(ofSize: 12), .secondaryLabelColor,
+                  NSRect(x: 0, y: 18, width: 360, height: 20), align: .center)
+        }
+        for (i, lesson) in mine.enumerated() {
+            let y = CGFloat(i) * 58
+            let band = FlippedView(frame: NSRect(x: 0, y: y, width: 360, height: 52))
+            band.wantsLayer = true
+            band.layer?.cornerRadius = 10
+            band.layer?.backgroundColor = dyn(NSColor.white.withAlphaComponent(0.45), NSColor.white.withAlphaComponent(0.06)).cgColor
+            label(band, lesson.subject, .systemFont(ofSize: 13, weight: .semibold), Palette.accent,
+                  NSRect(x: 14, y: 5, width: 332, height: 19))
+            let period = lesson.period > 0 ? " · 第\(lesson.period)节" : ""
+            label(band, "\(lesson.start)–\(lesson.end)\(period)", .monospacedDigitSystemFont(ofSize: 11, weight: .regular), Palette.accent,
+                  NSRect(x: 14, y: 29, width: 332, height: 17))
+            content.addSubview(band)
+        }
+        scroll.documentView = content
+        addSubview(scroll)
+        menuChip("更新各班课表", symbol: "square.and.arrow.down", rect: NSRect(x: 20, y: height - 50, width: 150, height: 30)) {
+            [weak owner] in owner?.importSchool()
+        }
+        setFrameSize(NSSize(width: Self.W * 2, height: height))
+    }
+
+    private func schoolCourseList(_ owner: AppDelegate, timeline: [SchoolLesson], frame: NSRect) {
+        let viewport = frame.height
+        let items = timeline.filter { !$0.isBreak }
+        let currentBreak = owner.currentSchoolBreak(now: displayNow)
+        let scroll = NSScrollView(frame: frame)
+        scroll.identifier = NSUserInterfaceItemIdentifier("school-course-list")
         scroll.hasVerticalScroller = true
         scroll.scrollerStyle = .overlay
         scroll.drawsBackground = false
@@ -311,41 +472,62 @@ extension ScheduleView {
         scroll.wantsLayer = true
         scroll.layer?.cornerRadius = 14
         scroll.layer?.backgroundColor = dyn(NSColor.white.withAlphaComponent(0.6), NSColor.white.withAlphaComponent(0.07)).cgColor
-        let content = FlippedView(frame: NSRect(x: 0, y: 0, width: 360, height: max(viewport, CGFloat(items.count) * 60 + 12)))
+        let listHeight = timeline.reduce(CGFloat(12)) { $0 + ($1.isBreak ? 48 : 60) }
+        let content = FlippedView(frame: NSRect(x: 0, y: 0, width: 360, height: max(viewport, listHeight)))
         if items.isEmpty {
             label(content, owner.schoolEmptyText(), .systemFont(ofSize: 12), .secondaryLabelColor, NSRect(x: 12, y: 20, width: 325, height: 24))
         }
-        for (i, lesson) in items.enumerated() {
-            let top = CGFloat(i) * 60 + 10
+        var top: CGFloat = 10
+        for (i, lesson) in timeline.enumerated() {
+            if lesson.isBreak {
+                let active = currentBreak?.period == lesson.period
+                let band = FlippedView(frame: NSRect(x: 8, y: top - 2, width: 344, height: 40))
+                band.wantsLayer = true
+                band.layer?.cornerRadius = 9
+                band.layer?.backgroundColor = Palette.todayAccent.withAlphaComponent(active ? 0.19 : 0.07).cgColor
+                label(band, active ? "\(lesson.period)中" : lesson.period, .systemFont(ofSize: 12, weight: .semibold),
+                      active ? Palette.todayAccent : .secondaryLabelColor, NSRect(x: 0, y: 3, width: 344, height: 17), align: .center)
+                label(band, "\(lesson.start)–\(lesson.end)", .monospacedDigitSystemFont(ofSize: 10.5, weight: .regular),
+                      .secondaryLabelColor, NSRect(x: 0, y: 22, width: 344, height: 15), align: .center)
+                content.addSubview(band)
+                top += 48
+                continue
+            }
             let mine = owner.isMySchoolLesson(lesson, on: owner.schoolDate)
             let isCurrent = owner.isSchoolLessonCurrent(lesson, on: owner.schoolDate, now: displayNow)
-            if isCurrent {
+            let readingColor: NSColor? = lesson.period == "早读"
+                ? dyn(NSColor(srgbRed: 0.07, green: 0.43, blue: 0.38, alpha: 1),
+                      NSColor(srgbRed: 0.40, green: 0.82, blue: 0.69, alpha: 1))
+                : lesson.period == "晚读"
+                    ? dyn(NSColor(srgbRed: 0.44, green: 0.28, blue: 0.67, alpha: 1),
+                          NSColor(srgbRed: 0.75, green: 0.61, blue: 0.94, alpha: 1)) : nil
+            let primaryInk = mine ? Palette.accent : (readingColor ?? .labelColor)
+            let secondaryInk = mine ? Palette.accent : (readingColor ?? .secondaryLabelColor)
+            if isCurrent || readingColor != nil {
                 let highlight = NSView(frame: NSRect(x: 8, y: top - 3, width: 344, height: 55))
                 highlight.wantsLayer = true
                 highlight.layer?.cornerRadius = 8
-                highlight.layer?.backgroundColor = Palette.accent.withAlphaComponent(0.10).cgColor
+                highlight.layer?.backgroundColor = (isCurrent ? Palette.accent : readingColor!)
+                    .withAlphaComponent(isCurrent ? 0.10 : 0.07).cgColor
                 content.addSubview(highlight)
             }
-            label(content, lesson.period, .systemFont(ofSize: 12, weight: .semibold), mine ? Palette.accent : .secondaryLabelColor, NSRect(x: 12, y: top + 1, width: 100, height: 18), align: .center)
-            label(content, "\(lesson.start)–\(lesson.end)", .monospacedDigitSystemFont(ofSize: 10.5, weight: .regular), mine ? Palette.accent : .secondaryLabelColor, NSRect(x: 12, y: top + 24, width: 100, height: 16), align: .center)
-            label(content, lesson.subject, .systemFont(ofSize: 14, weight: .semibold), mine ? Palette.accent : .labelColor, NSRect(x: 116, y: top + (isCurrent ? 1 : 12), width: 120, height: 21), align: .center)
+            label(content, lesson.period, .systemFont(ofSize: 12, weight: .semibold), secondaryInk, NSRect(x: 12, y: top + 1, width: 100, height: 18), align: .center)
+            label(content, "\(lesson.start)–\(lesson.end)", .monospacedDigitSystemFont(ofSize: 10.5, weight: .regular), secondaryInk, NSRect(x: 12, y: top + 24, width: 100, height: 16), align: .center)
+            label(content, lesson.subject, .systemFont(ofSize: 14, weight: .semibold), primaryInk, NSRect(x: 116, y: top + (isCurrent ? 1 : 12), width: 120, height: 21), align: .center)
             if isCurrent {
                 label(content, "进行中", .systemFont(ofSize: 10.5, weight: .medium), Palette.accent,
                       NSRect(x: 116, y: top + 27, width: 120, height: 16), align: .center)
             }
-            label(content, lesson.teacher, .systemFont(ofSize: 11.5), mine ? Palette.accent : .secondaryLabelColor, NSRect(x: 242, y: top + 15, width: 104, height: 17), align: .center)
+            label(content, lesson.teacher, .systemFont(ofSize: 11.5), secondaryInk, NSRect(x: 242, y: top + 15, width: 104, height: 17), align: .center)
             if i > 0 {
                 let line = NSView(frame: NSRect(x: 16, y: top - 7, width: 328, height: 1))
                 line.wantsLayer = true; line.layer?.backgroundColor = NSColor.separatorColor.withAlphaComponent(0.18).cgColor
                 content.addSubview(line)
             }
+            top += 60
         }
         scroll.documentView = content
         addSubview(scroll)
-        y += viewport + 14
-        menuChip("更新各班课表", symbol: "square.and.arrow.down", rect: NSRect(x: 20, y: y, width: 150, height: 30)) { [weak owner] in owner?.importSchool() }
-        label(self, "共\(items.count)节 · 上下滚动查看", .systemFont(ofSize: 11), .secondaryLabelColor, NSRect(x: 180, y: y + 7, width: 200, height: 18), align: .right)
-        setFrameSize(NSSize(width: Self.W, height: Self.panelHeight))
     }
 
     private func schoolCalendarGrid(_ top: CGFloat, _ owner: AppDelegate) -> CGFloat {
@@ -369,19 +551,65 @@ extension ScheduleView {
         let first = cal.date(from: parts)!
         let lead = weekdayNumber(first) - 1
         let count = cal.range(of: .day, in: .month, for: first)!.count
-        for day in 1...count {
-            let index = lead + day - 1
-            let date = cal.date(byAdding: .day, value: day - 1, to: first)!
+        let cellCount = ((lead + count + 6) / 7) * 7
+        for index in 0..<cellCount {
+            let date = cal.date(byAdding: .day, value: index - lead, to: first)!
+            let day = cal.component(.day, from: date)
+            let inMonth = cal.isDate(date, equalTo: first, toGranularity: .month)
             let selected = cal.isDate(date, inSameDayAs: owner.schoolDate)
             let cell = Chip(frame: NSRect(x: 20 + CGFloat(index % 7) * width, y: y + CGFloat(index / 7) * 38, width: width - 3, height: 35))
+            cell.identifier = NSUserInterfaceItemIdentifier("school-calendar-day-\(dateKey(date))")
             cell.wantsLayer = true; cell.layer?.cornerRadius = 8
-            cell.layer?.backgroundColor = selected ? Palette.accent.cgColor : NSColor.secondaryLabelColor.withAlphaComponent(index % 7 >= 5 ? 0.10 : 0.04).cgColor
-            label(cell, "\(day)", .systemFont(ofSize: 14, weight: selected ? .bold : .medium), selected ? .white : .labelColor, NSRect(x: 0, y: 2, width: width - 3, height: 17), align: .center)
+            cell.layer?.masksToBounds = true
+            cell.layer?.backgroundColor = !inMonth ? NSColor.clear.cgColor
+                : selected ? Palette.accent.cgColor : NSColor.secondaryLabelColor.withAlphaComponent(index % 7 >= 5 ? 0.14 : 0.085).cgColor
+            let outsideColor = dyn(NSColor(white: 0.62, alpha: 1), NSColor(white: 0.46, alpha: 1))
+            let numberColor: NSColor = !inMonth ? outsideColor : (selected ? .white : .labelColor)
+            let dayText = inMonth ? "\(day)" : "\(cal.component(.month, from: date))/\(day)"
+            label(cell, dayText, .systemFont(ofSize: inMonth ? 14 : 10.5, weight: !inMonth ? .regular : (selected ? .bold : .medium)), numberColor, NSRect(x: 0, y: 2, width: width - 3, height: 17), align: .center)
             let lessons = owner.schoolItems(on: date)
-            label(cell, lessons.isEmpty ? Lunar.cellText(date) : "\(lessons.count)节", .systemFont(ofSize: 9), selected ? .white : .secondaryLabelColor, NSRect(x: 0, y: 20, width: width - 3, height: 12), align: .center)
-            cell.onTap = { [weak owner] in owner?.schoolDate = date; owner?.refreshPopover() }
+            label(cell, !inMonth || lessons.isEmpty ? Lunar.cellText(date) : "\(lessons.count)节", .systemFont(ofSize: 9), !inMonth ? outsideColor : (selected ? .white : .secondaryLabelColor), NSRect(x: 0, y: 20, width: width - 3, height: 12), align: .center)
+            let mine = owner.mySchoolLessons(on: date)
+            let markers = owner.schoolDayMarkers(on: date)
+            cell.toolTip = "\(dateKey(date)) · 班级\(lessons.count)节 · 我有\(mine.count)节课（正课/培优\(markers.regular)节，早晚读\(markers.reading)节）"
+            if inMonth && markers.regular > 0 {
+                let corner = SchoolRegularCorner(frame: NSRect(x: 0, y: 0, width: 16, height: 16))
+                corner.identifier = NSUserInterfaceItemIdentifier("school-personal-regular-\(dateKey(date))")
+                corner.selected = selected
+                cell.addSubview(corner)
+            }
+            if inMonth && markers.reading > 0 {
+                let dot = NSView(frame: NSRect(x: cell.frame.width - 10, y: 4, width: 6, height: 6))
+                dot.identifier = NSUserInterfaceItemIdentifier("school-personal-reading-\(dateKey(date))")
+                dot.wantsLayer = true
+                dot.layer?.cornerRadius = 3
+                dot.layer?.backgroundColor = Palette.accent.cgColor
+                if selected {
+                    dot.layer?.borderWidth = 1.2
+                    dot.layer?.borderColor = NSColor.white.cgColor
+                }
+                cell.addSubview(dot)
+            }
+            cell.onTap = { [weak owner] in
+                guard let owner, (1900...2100).contains(cal.component(.year, from: date)) else { return }
+                owner.schoolDate = date
+                if !inMonth { owner.schoolMonth = cal.date(from: cal.dateComponents([.year, .month], from: date))! }
+                owner.refreshPopover()
+            }
             addSubview(cell)
         }
-        return y + CGFloat((lead + count + 6) / 7) * 38 + 10
+        let bottom = y + CGFloat((lead + count + 6) / 7) * 38
+        let corner = SchoolRegularCorner(frame: NSRect(x: 22, y: bottom + 4, width: 16, height: 16))
+        addSubview(corner)
+        label(self, "我的正课 / 培优", .systemFont(ofSize: 10.5), .secondaryLabelColor,
+              NSRect(x: 44, y: bottom + 3, width: 140, height: 18))
+        let dot = NSView(frame: NSRect(x: 208, y: bottom + 8, width: 6, height: 6))
+        dot.wantsLayer = true
+        dot.layer?.cornerRadius = 3
+        dot.layer?.backgroundColor = Palette.accent.cgColor
+        addSubview(dot)
+        label(self, "我的早读 / 晚读", .systemFont(ofSize: 10.5), .secondaryLabelColor,
+              NSRect(x: 220, y: bottom + 3, width: 160, height: 18))
+        return bottom + 30
     }
 }
